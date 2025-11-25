@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, TrendingUp } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { Product, ViewType } from '../types';
 import { MOCK_SALES_DATA, MOCK_TEAM_PERFORMANCE } from '../mockData';
 import { formatCurrency } from '../utils';

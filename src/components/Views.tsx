@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Calendar, CheckCircle, Clock, ChevronRight, MapPin, User, FileText,
-  Search, Briefcase, ArrowLeft, Tags, Building2, Swords, StickyNote,
+  Calendar, CheckCircle, Clock, ChevronRight, MapPin,
+  Search, Briefcase, Tags, Building2, Swords, StickyNote,
   Package, Globe, Truck, ClipboardCheck, ScrollText, Lightbulb, UserCheck,
-  TrendingUp, PlayCircle, StopCircle, Factory, MessageSquare, CalendarDays,
-  PenTool, Navigation, UserPlus, Target, Percent
+  TrendingUp
 } from 'lucide-react';
-import type { Visit, Customer, Brand, Product, ViewType, ClientTabType, ActionType } from '../types';
-import { MOCK_CUSTOMERS, MOCK_BRANDS, MOCK_CONTACTS, MOCK_SALES_DATA, MOCK_TEAM_PERFORMANCE } from '../mockData';
-import { getDateString, formatCurrency } from '../utils';
+import type { Visit, Customer, Brand, ViewType, ClientTabType, ActionType } from '../types';
+import { MOCK_CUSTOMERS, MOCK_BRANDS } from '../mockData';
+import { getDateString } from '../utils';
 
 interface FilterChipProps {
   label: string;

@@ -16,7 +16,7 @@ interface DashboardViewProps {
   onAction: (visit: Visit, action: ActionType) => void;
 }
 
-const DashboardView: React.FC<DashboardViewProps> = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onAction }) => {
+const DashboardView: React.FC<DashboardViewProps> = ({ visits, onSelectVisit, onAction }) => {
   const [dashboardFilter, setDashboardFilter] = useState('Today');
   const [customDate, setCustomDate] = useState(getDateString(0));
   const todayStr = getDateString(0);
