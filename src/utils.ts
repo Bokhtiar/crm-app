@@ -1,4 +1,4 @@
-export const getDateString = (offset: number = 0): string => {
+export const getDateString = (offset = 0): string => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
   return date.toISOString().split('T')[0];
@@ -9,6 +9,9 @@ export const getTimeString = (): string => {
 };
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD', 
+    minimumFractionDigits: 0 
+  }).format(amount);
 };
-

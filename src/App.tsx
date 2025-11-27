@@ -267,33 +267,41 @@ export default function App() {
             <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setShowQuickMenu(false)}></div>
           )}
 
-          <button onClick={() => handleNav('dashboard')} className={`flex flex-col items-center gap-1 ${currentView === 'dashboard' ? 'text-blue-600' : 'text-gray-400'}`}>
-            <LayoutDashboard size={24} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
-            <span className="text-[10px] font-bold">Home</span>
+          <button onClick={() => handleNav('dashboard')} className="flex flex-col items-center gap-1">
+            <div className={`p-2 rounded-xl transition-all ${currentView === 'dashboard' ? 'bg-blue-100' : 'bg-transparent'}`}>
+              <LayoutDashboard size={24} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} className={currentView === 'dashboard' ? 'text-blue-600' : 'text-gray-400'} />
+            </div>
+            <span className={`text-[10px] font-bold ${currentView === 'dashboard' ? 'text-blue-600' : 'text-gray-400'}`}>Home</span>
           </button>
 
-          <button onClick={() => handleNav('customers')} className={`flex flex-col items-center gap-1 ${currentView === 'customers' ? 'text-blue-600' : 'text-gray-400'}`}>
-            <Users size={24} strokeWidth={currentView === 'customers' ? 2.5 : 2} />
-            <span className="text-[10px] font-bold">Clients</span>
+          <button onClick={() => handleNav('customers')} className="flex flex-col items-center gap-1">
+            <div className={`p-2 rounded-xl transition-all ${currentView === 'customers' ? 'bg-blue-100' : 'bg-transparent'}`}>
+              <Users size={24} strokeWidth={currentView === 'customers' ? 2.5 : 2} className={currentView === 'customers' ? 'text-blue-600' : 'text-gray-400'} />
+            </div>
+            <span className={`text-[10px] font-bold ${currentView === 'customers' ? 'text-blue-600' : 'text-gray-400'}`}>Clients</span>
           </button>
 
           <div className="relative -top-6 z-50">
              <button 
                onClick={() => setShowQuickMenu(!showQuickMenu)} 
-               className={`bg-blue-600 text-white p-4 rounded-full shadow-lg shadow-blue-200 border-4 border-gray-50 active:scale-95 transition-transform ${showQuickMenu ? 'rotate-45' : ''}`}
+               className={`bg-gradient-to-br from-blue-600 to-blue-700 text-white p-4 rounded-full shadow-xl shadow-blue-300 border-4 border-white active:scale-95 transition-all hover:shadow-2xl hover:shadow-blue-400 ${showQuickMenu ? 'rotate-45' : ''}`}
              >
-               <Plus size={24} strokeWidth={3} />
+               <Plus size={28} strokeWidth={3} />
              </button>
           </div>
 
-          <button onClick={() => handleNav('visits')} className={`flex flex-col items-center gap-1 ${currentView === 'visits' ? 'text-blue-600' : 'text-gray-400'}`}>
-            <Calendar size={24} strokeWidth={currentView === 'visits' ? 2.5 : 2} />
-            <span className="text-[10px] font-bold">Visits</span>
+          <button onClick={() => handleNav('visits')} className="flex flex-col items-center gap-1">
+            <div className={`p-2 rounded-xl transition-all ${currentView === 'visits' ? 'bg-blue-100' : 'bg-transparent'}`}>
+              <Calendar size={24} strokeWidth={currentView === 'visits' ? 2.5 : 2} className={currentView === 'visits' ? 'text-blue-600' : 'text-gray-400'} />
+            </div>
+            <span className={`text-[10px] font-bold ${currentView === 'visits' ? 'text-blue-600' : 'text-gray-400'}`}>Visits</span>
           </button>
 
-          <button onClick={() => handleNav('more')} className={`flex flex-col items-center gap-1 ${['more', 'sales_detail', 'team_report'].includes(currentView) ? 'text-blue-600' : 'text-gray-400'}`}>
-            <MoreHorizontal size={24} strokeWidth={['more', 'sales_detail', 'team_report'].includes(currentView) ? 2.5 : 2} />
-            <span className="text-[10px] font-bold">More</span>
+          <button onClick={() => handleNav('more')} className="flex flex-col items-center gap-1">
+            <div className={`p-2 rounded-xl transition-all ${['more', 'sales_detail', 'team_report'].includes(currentView) ? 'bg-blue-100' : 'bg-transparent'}`}>
+              <MoreHorizontal size={24} strokeWidth={['more', 'sales_detail', 'team_report'].includes(currentView) ? 2.5 : 2} className={['more', 'sales_detail', 'team_report'].includes(currentView) ? 'text-blue-600' : 'text-gray-400'} />
+            </div>
+            <span className={`text-[10px] font-bold ${['more', 'sales_detail', 'team_report'].includes(currentView) ? 'text-blue-600' : 'text-gray-400'}`}>More</span>
           </button>
         </nav>
       )}
