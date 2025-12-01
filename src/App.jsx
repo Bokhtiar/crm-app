@@ -1,15 +1,66 @@
 import React, { useState } from 'react';
+
 import { 
-  LayoutDashboard, Users, Calendar, TrendingUp, Plus, MapPin, Phone, Briefcase, 
-  CheckCircle, Clock, ChevronRight, Menu, X, FileText, Search, User, Tags, 
-  BarChart2, ArrowLeft, MoreHorizontal, Factory, Swords, StickyNote, Package, 
-  Globe, Truck, ClipboardCheck, ScrollText, Lightbulb, Building2, CheckSquare, 
-  Square, PieChart, UserCheck, Filter, SlidersHorizontal, Info, CalendarDays, 
-  MessageSquare, Mail, UserPlus, Target, Percent, PlayCircle, StopCircle, 
-  Navigation, PenTool, LogOut, Edit, Monitor, Smartphone, Trophy, ChevronDown
+  LayoutDashboard, 
+  Users, 
+  Calendar, 
+  TrendingUp, 
+  Plus, 
+  MapPin, 
+  Phone, 
+  Briefcase, 
+  CheckCircle, 
+  Clock, 
+  ChevronRight,
+  Menu,
+  X,
+  FileText,
+  Search,
+  User,
+  Tags,
+  BarChart2,
+  ArrowLeft,
+  MoreHorizontal,
+  Factory,
+  Swords,
+  StickyNote,
+  Package,
+  Globe,
+  Truck,
+  ClipboardCheck,
+  ScrollText,
+  Lightbulb,
+  Building2,
+  CheckSquare,
+  Square,
+  PieChart,
+  UserCheck,
+  Filter,
+  SlidersHorizontal,
+  Info,
+  CalendarDays,
+  MessageSquare,
+  Mail,
+  UserPlus,
+  Target,
+  Percent,
+  PlayCircle,
+  StopCircle,
+  Navigation,
+  PenTool,
+  LogOut,
+  Edit,
+  Monitor,
+  Smartphone,
+  Trophy,
+  ChevronDown,
+  Send,
+  Bell,
+  AlertCircle,
+  Check
 } from 'lucide-react';
 
-// Helpers
+// --- Helpers ---
 const getDateString = (offset = 0) => {
   const date = new Date();
   date.setDate(date.getDate() + offset);
@@ -22,14 +73,37 @@ const getTimeString = () => {
 
 const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
 
-// Constants
+// --- Constants ---
 const VISIT_PURPOSES = [
-  "Relationship Buildup", "Requirement Collection", "Sample Collection", "Counter Sample Providing",
-  "Quality Checking by Customer", "Sample Making by Customer", "Waiting for Quality Approval",
-  "Price Negotiation", "Waiting for Booking", "Booking Received"
+  "Relationship Buildup",
+  "Requirement Collection",
+  "Sample Collection",
+  "Counter Sample Providing",
+  "Quality Checking by Customer",
+  "Sample Making by Customer",
+  "Waiting for Quality Approval",
+  "Price Negotiation",
+  "Waiting for Booking",
+  "Booking Received"
 ];
 
-// Mock Data
+const SUGGESTION_OPTIONS = [
+  "Increase Client Visit Frequency",
+  "Focus on Payment Collection",
+  "Improve Product Knowledge",
+  "Target High-Value Clients",
+  "Better Time Management",
+  "Follow-up on Pending Samples"
+];
+
+// --- Mock Data ---
+const MOCK_NOTIFICATIONS = [
+  { id: 1, type: 'success', title: 'Visit Completed', message: 'You successfully checked out from Ha-Meem Group.', time: '10 mins ago', read: false },
+  { id: 2, type: 'alert', title: 'Target Alert', message: 'You have reached 80% of your monthly sales target!', time: '1 hour ago', read: false },
+  { id: 3, type: 'info', title: 'New Price List', message: 'Admin updated the price list for Woven Interlining.', time: 'Yesterday', read: true },
+  { id: 4, type: 'reminder', title: 'Pending Feedback', message: 'Please submit the report for Beximco visit.', time: '2 days ago', read: true },
+];
+
 const MOCK_CUSTOMERS = [
   { id: 1, name: 'Ha-Meem Group', address: 'Tejgaon, Dhaka', type: 'Woven', contact: '01711-000000', brandIds: [1, 3] },
   { id: 2, name: 'Beximco Textiles', address: 'Gazipur', type: 'Denim', contact: '01811-000000', brandIds: [2, 4] },
@@ -86,6 +160,13 @@ const MOCK_PERSON_SALES = [
       { name: 'Square Fashions', value: 20000 },
       { name: 'Palmal Group', value: 10000 },
       { name: 'Beximco', value: 5000 }
+    ],
+    topBrands: [
+      { name: 'H&M', value: 40000 },
+      { name: 'Zara', value: 30000 },
+      { name: 'Gap', value: 25000 },
+      { name: 'Uniqlo', value: 15000 },
+      { name: 'Next', value: 10000 }
     ]
   },
   { 
@@ -95,6 +176,11 @@ const MOCK_PERSON_SALES = [
       { name: 'Beximco', value: 25000 },
       { name: 'Palmal Group', value: 15000 },
       { name: 'Square Fashions', value: 5000 }
+    ],
+    topBrands: [
+      { name: 'Zara', value: 20000 },
+      { name: 'H&M', value: 15000 },
+      { name: 'Next', value: 10000 }
     ]
   },
   { 
@@ -104,6 +190,11 @@ const MOCK_PERSON_SALES = [
       { name: 'Ha-Meem Group', value: 80000 },
       { name: 'Envoy Textiles', value: 60000 },
       { name: 'Beximco', value: 40000 }
+    ],
+    topBrands: [
+      { name: 'Uniqlo', value: 70000 },
+      { name: 'Gap', value: 60000 },
+      { name: 'H&M', value: 50000 }
     ]
   },
   { 
@@ -112,11 +203,15 @@ const MOCK_PERSON_SALES = [
     topClients: [
       { name: 'Square Fashions', value: 40000 },
       { name: 'Palmal Group', value: 30000 }
+    ],
+    topBrands: [
+      { name: 'Next', value: 35000 },
+      { name: 'Zara', value: 35000 }
     ]
   },
 ];
 
-// Reusable Components
+// --- Reusable Components ---
 const FilterChip = ({ label, active, onClick }) => (
   <button 
     onClick={onClick}
@@ -128,101 +223,31 @@ const FilterChip = ({ label, active, onClick }) => (
   </button>
 );
 
-// Modals
+
+// --- Modals ---
 const AddVisitModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
   const [date, setDate] = useState(getDateString(0));
   const [custId, setCustId] = useState('');
   const [contactId, setContactId] = useState('');
   const [note, setNote] = useState('');
-
   const availableContacts = MOCK_CONTACTS.filter(c => c.customerId === parseInt(custId));
   const selectedContactInfo = MOCK_CONTACTS.find(c => c.id === parseInt(contactId));
-
   const handleSubmit = () => {
     if (!custId || !date) return; 
-    onSave({
-      customerId: parseInt(custId),
-      contactId: parseInt(contactId) || null,
-      userId: 1, 
-      date,
-      status: 'Planned',
-      notes: note,
-      feedback: [],
-      productionInfo: null,
-      checkInTime: null,
-      checkOutTime: null,
-      location: null
-    });
+    onSave({ customerId: parseInt(custId), contactId: parseInt(contactId) || null, userId: 1, date, status: 'Planned', notes: note, feedback: [], productionInfo: null, checkInTime: null, checkOutTime: null, location: null });
     onClose();
   };
-
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm z-[100]">
       <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Plan New Visit</h3>
-          <button onClick={onClose}><X size={24} className="text-gray-400"/></button>
-        </div>
-        
+        <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-bold">Plan New Visit</h3><button onClick={onClose}><X size={24} className="text-gray-400"/></button></div>
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Select Customer</label>
-            <div className="relative">
-              <select className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" onChange={(e) => { setCustId(e.target.value); setContactId(''); }}>
-                <option value="">Select...</option>
-                {MOCK_CUSTOMERS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
-            <div className="relative">
-              <select 
-                className="w-full border p-3 rounded-xl bg-gray-50 text-sm disabled:opacity-50 appearance-none" 
-                onChange={(e) => setContactId(e.target.value)}
-                disabled={!custId}
-                value={contactId}
-              >
-                <option value="">{availableContacts.length > 0 ? "Select Contact..." : "No contacts found"}</option>
-                {availableContacts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/>
-            </div>
-          </div>
-
-          {selectedContactInfo && (
-            <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-sm space-y-1 animate-in fade-in">
-               <p><span className="font-bold text-blue-800">Designation:</span> {selectedContactInfo.designation}</p>
-               <p><span className="font-bold text-blue-800">Phone:</span> {selectedContactInfo.phone}</p>
-               <p><span className="font-bold text-blue-800">Email:</span> {selectedContactInfo.email}</p>
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-            <input type="date" value={date} className="w-full border p-3 rounded-xl bg-gray-50 text-sm" onChange={(e) => setDate(e.target.value)} />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Purpose/Agenda</label>
-            <div className="relative">
-              <select 
-                className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" 
-                value={note} 
-                onChange={(e) => setNote(e.target.value)}
-              >
-                <option value="">Select Purpose...</option>
-                {VISIT_PURPOSES.map((purpose, idx) => (
-                  <option key={idx} value={purpose}>{purpose}</option>
-                ))}
-              </select>
-              <ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/>
-            </div>
-          </div>
-
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Select Customer</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" onChange={(e) => { setCustId(e.target.value); setContactId(''); }}><option value="">Select...</option>{MOCK_CUSTOMERS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm disabled:opacity-50 appearance-none" onChange={(e) => setContactId(e.target.value)} disabled={!custId} value={contactId}><option value="">{availableContacts.length > 0 ? "Select Contact..." : "No contacts found"}</option>{availableContacts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
+          {selectedContactInfo && (<div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-sm space-y-1 animate-in fade-in"><p><span className="font-bold text-blue-800">Designation:</span> {selectedContactInfo.designation}</p><p><span className="font-bold text-blue-800">Phone:</span> {selectedContactInfo.phone}</p><p><span className="font-bold text-blue-800">Email:</span> {selectedContactInfo.email}</p></div>)}
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Date</label><input type="date" value={date} className="w-full border p-3 rounded-xl bg-gray-50 text-sm" onChange={(e) => setDate(e.target.value)} /></div>
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Purpose/Agenda</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" value={note} onChange={(e) => setNote(e.target.value)}><option value="">Select Purpose...</option>{VISIT_PURPOSES.map((purpose, idx) => (<option key={idx} value={purpose}>{purpose}</option>))}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
           <button onClick={handleSubmit} className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold mt-2 text-base shadow-lg shadow-blue-200">Save Plan</button>
         </div>
       </div>
@@ -233,160 +258,94 @@ const AddVisitModal = ({ isOpen, onClose, onSave }) => {
 const FeedbackModal = ({ visit, onClose, onSave }) => {
   if (!visit) return null;
   const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
-
   const [selectedFeedback, setSelectedFeedback] = useState(visit.feedback || []);
   const [meetingMinutes, setMeetingMinutes] = useState(visit.minutes || '');
   const [nextFollowUp, setNextFollowUp] = useState(visit.nextFollowUp || '');
   const [prodLine, setProdLine] = useState(visit.productionInfo?.line || '');
   const [prodQty, setProdQty] = useState(visit.productionInfo?.qty || '');
   const [selectedBrands, setSelectedBrands] = useState(visit.productionInfo?.brands || []);
-
-  const toggleFeedback = (item) => {
-    if(selectedFeedback.includes(item)) {
-      setSelectedFeedback(selectedFeedback.filter(i => i !== item));
-    } else {
-      setSelectedFeedback([...selectedFeedback, item]);
-    }
-  };
-
-  const toggleBrand = (brandId) => {
-     if(selectedBrands.includes(brandId)) {
-      setSelectedBrands(selectedBrands.filter(id => id !== brandId));
-    } else {
-      setSelectedBrands([...selectedBrands, brandId]);
-    }
-  };
-
-  const handleSubmit = () => {
-    onSave(visit.id, {
-      status: 'Completed', 
-      minutes: meetingMinutes,
-      nextFollowUp: nextFollowUp,
-      feedback: selectedFeedback,
-      productionInfo: (prodLine || prodQty) ? { 
-         line: prodLine, 
-         qty: prodQty, 
-         brands: selectedBrands 
-      } : null
-    });
-  };
-
+  const toggleFeedback = (item) => { if(selectedFeedback.includes(item)) setSelectedFeedback(selectedFeedback.filter(i => i !== item)); else setSelectedFeedback([...selectedFeedback, item]); };
+  const toggleBrand = (brandId) => { if(selectedBrands.includes(brandId)) setSelectedBrands(selectedBrands.filter(id => id !== brandId)); else setSelectedBrands([...selectedBrands, brandId]); };
+  const handleSubmit = () => { onSave(visit.id, { status: 'Completed', minutes: meetingMinutes, nextFollowUp: nextFollowUp, feedback: selectedFeedback, productionInfo: (prodLine || prodQty) ? { line: prodLine, qty: prodQty, brands: selectedBrands } : null }); };
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4 backdrop-blur-sm overflow-y-auto z-[100]">
       <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-3 border-b">
-          <h3 className="text-xl font-bold">{visit.status === 'Completed' ? 'Update Report' : 'Submit Report'}</h3>
-          <button onClick={onClose}><X size={24} className="text-gray-400"/></button>
-        </div>
-        
+        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-3 border-b"><h3 className="text-xl font-bold">{visit.status === 'Completed' ? 'Update Report' : 'Submit Report'}</h3><button onClick={onClose}><X size={24} className="text-gray-400"/></button></div>
         <div className="space-y-4">
-          <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-               <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold bg-blue-200 text-blue-700 px-2 py-0.5 rounded uppercase">{visit.status === 'Completed' ? 'COMPLETED' : 'REPORT PENDING'}</span>
-                  <span className="text-[10px] text-gray-500">Date: {visit.date}</span>
-               </div>
-               <div className="font-bold text-blue-900 text-lg">{customer?.name}</div>
-               <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
-                 <div>In: <span className="font-mono font-bold">{visit.checkInTime || '--:--'}</span></div>
-                 <div>Out: <span className="font-mono font-bold">{visit.checkOutTime || '--:--'}</span></div>
-               </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-gray-800 mb-1">Meeting Minutes</label>
-            <textarea 
-              className="w-full border p-3 rounded-xl bg-white text-sm" 
-              rows="3" 
-              placeholder="What was discussed?"
-              value={meetingMinutes}
-              onChange={(e) => setMeetingMinutes(e.target.value)}
-            ></textarea>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-gray-800 mb-2">Outcomes</label>
-            <div className="grid grid-cols-2 gap-2">
-              {FEEDBACK_OPTIONS.map((opt, idx) => (
-                <div key={idx} onClick={() => toggleFeedback(opt)} className={`p-2 rounded-lg border text-xs font-medium cursor-pointer flex items-center gap-2 ${selectedFeedback.includes(opt) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-gray-200 text-gray-600'}`}>
-                  {selectedFeedback.includes(opt) ? <CheckSquare size={16} /> : <Square size={16} />}
-                  {opt}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-gray-800 mb-1">Next Follow-up</label>
-            <input 
-              type="date" 
-              className="w-full border p-3 rounded-xl bg-white text-sm"
-              value={nextFollowUp}
-              onChange={(e) => setNextFollowUp(e.target.value)}
-            />
-          </div>
-
-          <div className="border-t border-gray-100 pt-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Factory size={18} className="text-gray-500"/>
-              <label className="text-sm font-bold text-gray-800">Production (Optional)</label>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <input type="text" placeholder="Line No." value={prodLine} onChange={(e) => setProdLine(e.target.value)} className="w-full border p-3 rounded-xl text-sm" />
-              <input type="number" placeholder="Qty" value={prodQty} onChange={(e) => setProdQty(e.target.value)} className="w-full border p-3 rounded-xl text-sm" />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Running Brands</label>
-              <div className="flex flex-wrap gap-2">
-                 {MOCK_BRANDS.map(brand => (
-                   <button 
-                     key={brand.id}
-                     onClick={() => toggleBrand(brand.id)}
-                     className={`px-3 py-1 rounded-lg text-xs border font-medium ${selectedBrands.includes(brand.id) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
-                   >
-                     {brand.name}
-                   </button>
-                 ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2 sticky bottom-0 bg-white pb-1">
-              <button onClick={onClose} className="flex-1 bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold text-sm">Cancel</button>
-              <button onClick={handleSubmit} className="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-green-200 text-sm">
-                {visit.status === 'Completed' ? 'Update Report' : 'Save Report'}
-              </button>
-          </div>
+          <div className="bg-blue-50 p-3 rounded-xl border border-blue-100"><div className="flex justify-between items-center mb-2"><span className="text-[10px] font-bold bg-blue-200 text-blue-700 px-2 py-0.5 rounded uppercase">{visit.status === 'Completed' ? 'COMPLETED' : 'REPORT PENDING'}</span><span className="text-[10px] text-gray-500">Date: {visit.date}</span></div><div className="font-bold text-blue-900 text-lg">{customer?.name}</div><div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600"><div>In: <span className="font-mono font-bold">{visit.checkInTime || '--:--'}</span></div><div>Out: <span className="font-mono font-bold">{visit.checkOutTime || '--:--'}</span></div></div></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-1">Meeting Minutes</label><textarea className="w-full border p-3 rounded-xl bg-white text-sm" rows="3" placeholder="What was discussed?" value={meetingMinutes} onChange={(e) => setMeetingMinutes(e.target.value)}></textarea></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-2">Outcomes</label><div className="grid grid-cols-2 gap-2">{FEEDBACK_OPTIONS.map((opt, idx) => (<div key={idx} onClick={() => toggleFeedback(opt)} className={`p-2 rounded-lg border text-xs font-medium cursor-pointer flex items-center gap-2 ${selectedFeedback.includes(opt) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-gray-200 text-gray-600'}`}>{selectedFeedback.includes(opt) ? <CheckSquare size={16} /> : <Square size={16} />}{opt}</div>))}</div></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-1">Next Follow-up</label><input type="date" className="w-full border p-3 rounded-xl bg-white text-sm" value={nextFollowUp} onChange={(e) => setNextFollowUp(e.target.value)} /></div>
+          <div className="border-t border-gray-100 pt-4"><div className="flex items-center gap-2 mb-3"><Factory size={18} className="text-gray-500"/><label className="text-sm font-bold text-gray-800">Production (Optional)</label></div><div className="grid grid-cols-2 gap-3 mb-3"><input type="text" placeholder="Line No." value={prodLine} onChange={(e) => setProdLine(e.target.value)} className="w-full border p-3 rounded-xl text-sm" /><input type="number" placeholder="Qty" value={prodQty} onChange={(e) => setProdQty(e.target.value)} className="w-full border p-3 rounded-xl text-sm" /></div><div><label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Running Brands</label><div className="flex flex-wrap gap-2">{MOCK_BRANDS.map(brand => (<button key={brand.id} onClick={() => toggleBrand(brand.id)} className={`px-3 py-1 rounded-lg text-xs border font-medium ${selectedBrands.includes(brand.id) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>{brand.name}</button>))}</div></div></div>
+          <div className="flex gap-3 pt-2 sticky bottom-0 bg-white pb-1"><button onClick={onClose} className="flex-1 bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold text-sm">Cancel</button><button onClick={handleSubmit} className="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-green-200 text-sm">{visit.status === 'Completed' ? 'Update Report' : 'Save Report'}</button></div>
         </div>
       </div>
     </div>
   );
 };
 
-// Views
+// --- NEW: Notifications View ---
+const NotificationsView = ({ onNavigate }) => {
+  return (
+    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto bg-gray-50">
+      <div className="flex items-center gap-3 mb-5 sticky top-0 bg-gray-50 z-10 py-2">
+        <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
+        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
+      </div>
+      <div className="space-y-3">
+        {MOCK_NOTIFICATIONS.map(notif => (
+          <div key={notif.id} className={`p-4 rounded-2xl border flex gap-4 items-start ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
+             <div className={`p-2.5 rounded-full shrink-0 ${
+                notif.type === 'success' ? 'bg-green-100 text-green-600' : 
+                notif.type === 'alert' ? 'bg-red-100 text-red-600' : 
+                notif.type === 'reminder' ? 'bg-yellow-100 text-yellow-600' : 
+                'bg-blue-100 text-blue-600'
+             }`}>
+                {notif.type === 'success' ? <CheckCircle size={20}/> : 
+                 notif.type === 'alert' ? <Target size={20}/> : 
+                 notif.type === 'reminder' ? <Clock size={20}/> : 
+                 <Info size={20}/>}
+             </div>
+             <div className="flex-1">
+                <h4 className={`font-bold text-sm mb-1 ${notif.read ? 'text-gray-700' : 'text-gray-900'}`}>{notif.title}</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">{notif.message}</p>
+                <span className="text-[10px] text-gray-400 mt-2 block">{notif.time}</span>
+             </div>
+             {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
+          </div>
+        ))}
+      </div>
+      {MOCK_NOTIFICATIONS.length === 0 && (
+         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+            <Bell size={48} className="mb-4 opacity-20"/>
+            <p>No new notifications</p>
+         </div>
+      )}
+    </div>
+  );
+};
+
+
+// --- Views ---
 const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onAction }) => {
   const [dashboardFilter, setDashboardFilter] = useState('Today');
   const [customDate, setCustomDate] = useState(getDateString(0));
   const todayStr = getDateString(0);
   const progress = (MOCK_SALES_DATA.achieved / MOCK_SALES_DATA.monthlyTarget) * 100;
-
+  const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.read).length;
   const getFilteredVisits = () => {
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    
     const curr = new Date();
     const first = curr.getDate() - curr.getDay(); 
     const firstDayOfWeek = new Date(curr.setDate(first));
     const lastDayOfWeek = new Date(curr.setDate(curr.getDate()+6));
     firstDayOfWeek.setHours(0,0,0,0);
     lastDayOfWeek.setHours(23,59,59,999);
-
     return visits.filter(v => {
       const vDate = new Date(v.date);
       vDate.setHours(0,0,0,0);
-
       if (dashboardFilter === 'Today') return v.date === todayStr;
       if (dashboardFilter === 'Custom') return v.date === customDate;
       if (dashboardFilter === 'Week') return vDate >= firstDayOfWeek && vDate <= lastDayOfWeek;
@@ -394,31 +353,30 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
       return false;
     });
   };
-
   const filteredVisits = getFilteredVisits();
   const plannedCount = filteredVisits.length;
   const completedCount = filteredVisits.filter(v => v.status === 'Completed').length;
   const pendingCount = filteredVisits.filter(v => v.status === 'Planned' || v.status === 'In Progress' || v.status === 'Checked Out').length;
   const completionRate = plannedCount > 0 ? (completedCount / plannedCount) * 100 : 0;
-
   const getScheduleTitle = () => {
       if (dashboardFilter === 'Today') return "Today's Schedule";
       if (dashboardFilter === 'Week') return "Weekly Schedule";
       if (dashboardFilter === 'Month') return "Monthly Schedule";
       return "Selected Date Schedule";
   };
-
   return (
     <div className="space-y-6 pb-24">
       <header className="bg-blue-900 text-white p-6 rounded-b-3xl shadow-lg">
         <div className="flex justify-between items-center mb-5">
-          <div>
-            <h1 className="text-2xl font-bold">Hello, Arif</h1>
-            <p className="text-blue-200 text-sm">Sr. Marketing Executive</p>
+          <div className="flex items-center gap-3">
+             <div className="h-10 w-10 bg-blue-700 rounded-full flex items-center justify-center border-2 border-blue-500 font-bold text-sm">A</div>
+             <div><h1 className="text-xl font-bold leading-none">Hello, Arif</h1><p className="text-blue-200 text-xs mt-1">Sr. Marketing Executive</p></div>
           </div>
-          <div className="h-10 w-10 bg-blue-700 rounded-full flex items-center justify-center border-2 border-blue-500 font-bold text-sm">A</div>
+          <button onClick={() => onNavigate('notifications')} className="bg-white/10 p-2.5 rounded-full relative hover:bg-white/20 transition-colors">
+             <Bell size={20}/>
+             {unreadCount > 0 && <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-blue-900"></span>}
+          </button>
         </div>
-        
         <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20 shadow-inner">
           <div className="flex justify-between items-end">
             <div>
@@ -435,7 +393,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
           </div>
         </div>
       </header>
-
       <div className="px-5">
         <div className="flex justify-between items-center mb-3">
            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Visit Overview</h2>
@@ -446,7 +403,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
              <FilterChip label="Custom" active={dashboardFilter === 'Custom'} onClick={() => setDashboardFilter('Custom')} />
            </div>
         </div>
-
         {dashboardFilter === 'Custom' && (
           <div className="mb-4 animate-in fade-in slide-in-from-top-2">
               <div className="relative">
@@ -460,7 +416,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
               </div>
           </div>
         )}
-        
         <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="bg-blue-50 p-3 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden group">
              <div className="absolute right-[-10px] top-[-10px] w-16 h-16 bg-blue-100 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
@@ -504,7 +459,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
           </div>
         </div>
       </div>
-
       <div className="px-5">
         <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wider">{getScheduleTitle()}</h2>
         {filteredVisits.length === 0 ? (
@@ -513,7 +467,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
           filteredVisits.map(visit => {
             const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
             const contact = MOCK_CONTACTS.find(c => c.id === visit.contactId);
-            
             let actionButton = null;
             if (visit.status === 'Planned') {
               actionButton = (
@@ -549,7 +502,6 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
                 </span>
               );
             }
-
             return (
               <div key={visit.id} onClick={() => onSelectVisit(visit)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-3 flex justify-between items-center active:scale-95 transition-transform cursor-pointer relative overflow-hidden">
                 <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${visit.status === 'In Progress' ? 'bg-orange-500' : visit.status === 'Completed' ? 'bg-green-500' : visit.status === 'Checked Out' ? 'bg-yellow-500' : 'bg-blue-500'}`}></div>
@@ -585,61 +537,32 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
   );
 };
 
+
+// --- Clients View ---
 const ClientsView = ({ clientTab, setClientTab, onSelectCustomer, onSelectBrand }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
-  
-  const filters = clientTab === 'customers' 
-    ? ['All', 'Woven', 'Denim', 'Knit'] 
-    : ['All', 'Retail', 'Fast Fashion', 'Casual'];
-
+  const filters = clientTab === 'customers' ? ['All', 'Woven', 'Denim', 'Knit'] : ['All', 'Retail', 'Fast Fashion', 'Casual'];
   const filteredData = (clientTab === 'customers' ? MOCK_CUSTOMERS : MOCK_BRANDS).filter(item => {
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = activeFilter === 'All' 
-          ? true 
-          : (clientTab === 'customers' ? item.type === activeFilter : item.segment === activeFilter);
+      const matchesFilter = activeFilter === 'All' ? true : (clientTab === 'customers' ? item.type === activeFilter : item.segment === activeFilter);
       return matchesSearch && matchesFilter;
   });
-
   return (
     <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
       <div className="flex p-1.5 bg-gray-100 rounded-xl mb-4 shadow-inner">
-        <button 
-          onClick={() => { setClientTab('customers'); setActiveFilter('All'); }} 
-          className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'customers' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}
-        >
-          Factories
-        </button>
-        <button 
-          onClick={() => { setClientTab('brands'); setActiveFilter('All'); }} 
-          className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'brands' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}
-        >
-          Brands
-        </button>
+        <button onClick={() => { setClientTab('customers'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'customers' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Factories</button>
+        <button onClick={() => { setClientTab('brands'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'brands' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Brands</button>
       </div>
-
       <div className="relative mb-4">
         <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
-        <input 
-          type="text" 
-          placeholder={`Search ${clientTab}...`} 
-          className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <input type="text" placeholder={`Search ${clientTab}...`} className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       </div>
-
       <div className="flex gap-2 overflow-x-auto pb-4 mb-2 no-scrollbar items-center">
           {filters.map(filter => (
-              <FilterChip 
-                  key={filter} 
-                  label={filter} 
-                  active={activeFilter === filter} 
-                  onClick={() => setActiveFilter(filter)} 
-              />
+              <FilterChip key={filter} label={filter} active={activeFilter === filter} onClick={() => setActiveFilter(filter)} />
           ))}
       </div>
-
       <div className="space-y-3">
         {filteredData.length === 0 ? (
             <div className="text-center py-12 text-gray-400">No results found</div>
@@ -649,13 +572,8 @@ const ClientsView = ({ clientTab, setClientTab, onSelectCustomer, onSelectBrand 
              return (
               <div key={item.id} onClick={() => onSelectCustomer(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-gray-800 text-lg">{item.name}</h3>
-                    <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md mt-1 inline-block">{item.type}</span>
-                  </div>
-                  <div className="bg-gray-50 p-2 rounded-full text-gray-400">
-                    <ChevronRight size={20} />
-                  </div>
+                  <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md mt-1 inline-block">{item.type}</span></div>
+                  <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-gray-50 grid grid-cols-2 gap-2 text-sm text-gray-600">
                   <div className="flex items-center gap-1.5"><MapPin size={14} className="text-blue-500"/> {item.address}</div>
@@ -666,13 +584,8 @@ const ClientsView = ({ clientTab, setClientTab, onSelectCustomer, onSelectBrand 
            } else {
              return (
               <div key={item.id} onClick={() => onSelectBrand(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer flex justify-between items-center">
-                <div>
-                   <h3 className="font-bold text-gray-800 text-lg">{item.name}</h3>
-                   <p className="text-sm text-gray-500 mt-0.5">{item.origin} • {item.segment}</p>
-                </div>
-                 <div className="bg-gray-50 p-2 rounded-full text-gray-400">
-                    <ChevronRight size={20} />
-                  </div>
+                <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><p className="text-sm text-gray-500 mt-0.5">{item.origin} • {item.segment}</p></div>
+                 <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
               </div>
              );
            }
@@ -685,7 +598,6 @@ const ClientsView = ({ clientTab, setClientTab, onSelectCustomer, onSelectBrand 
 
 const VisitsView = ({ visits, onSelectVisit, onAction }) => {
   const [statusFilter, setStatusFilter] = useState('All');
-
   const filteredVisits = visits.filter(v => {
       const isToday = v.date === getDateString(0);
       if (statusFilter === 'Today') return isToday;
@@ -695,79 +607,37 @@ const VisitsView = ({ visits, onSelectVisit, onAction }) => {
       if (statusFilter === 'Completed') return v.status === 'Completed';
       return true;
   }).sort((a,b) => new Date(a.date) - new Date(b.date));
-
   return (
     <div className="pb-24 pt-4 px-4">
     <h2 className="text-2xl font-bold text-gray-800 mb-4">Visit Plan</h2>
-    
     <div className="flex gap-2 overflow-x-auto pb-3 mb-2 no-scrollbar items-center">
         {['All', 'Today', 'Planned', 'In Progress', 'Checked Out', 'Completed'].map(f => (
             <FilterChip key={f} label={f} active={statusFilter === f} onClick={() => setStatusFilter(f)} />
         ))}
     </div>
-
     <div className="space-y-3">
-        {filteredVisits.length === 0 ? (
-             <div className="text-center py-12 text-gray-400">No visits found</div>
-        ) : (
+        {filteredVisits.length === 0 ? (<div className="text-center py-12 text-gray-400">No visits found</div>) : (
             filteredVisits.map(visit => {
             const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
-            
             let actionButton = null;
-            if (visit.status === 'Planned') {
-                actionButton = (
-                <button 
-                    onClick={(e) => { e.stopPropagation(); onAction(visit, 'checkin'); }}
-                    className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold"
-                >
-                    Check In
-                </button>
-                );
-            } else if (visit.status === 'In Progress') {
-                actionButton = (
-                <button 
-                    onClick={(e) => { e.stopPropagation(); onAction(visit, 'checkout'); }}
-                    className="bg-orange-500 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold animate-pulse"
-                >
-                    Check Out
-                </button>
-                );
-            } else if (visit.status === 'Checked Out') {
-                actionButton = (
-                <button 
-                    onClick={(e) => { e.stopPropagation(); onAction(visit, 'feedback'); }}
-                    className="bg-yellow-500 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold"
-                >
-                    Report
-                </button>
-                );
-            } else {
-                actionButton = (
-                    <span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle size={10}/> Done</span>
-                );
-            }
-
+            if (visit.status === 'Planned') { actionButton = (<button onClick={(e) => { e.stopPropagation(); onAction(visit, 'checkin'); }} className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold">Check In</button>); }
+            else if (visit.status === 'In Progress') { actionButton = (<button onClick={(e) => { e.stopPropagation(); onAction(visit, 'checkout'); }} className="bg-orange-500 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold animate-pulse">Check Out</button>); }
+            else if (visit.status === 'Checked Out') { actionButton = (<button onClick={(e) => { e.stopPropagation(); onAction(visit, 'feedback'); }} className="bg-yellow-500 text-white text-xs px-3 py-1.5 rounded-lg shadow-md active:scale-95 shrink-0 ml-1 whitespace-nowrap font-bold">Report</button>); }
+            else { actionButton = (<span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle size={10}/> Done</span>); }
             return (
                 <div key={visit.id} onClick={() => onSelectVisit(visit)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 active:scale-95 transition-transform cursor-pointer relative overflow-hidden">
-                <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${visit.status === 'In Progress' ? 'bg-orange-500' : visit.status === 'Completed' ? 'bg-green-500' : visit.status === 'Checked Out' ? 'bg-yellow-500' : 'bg-blue-500'}`}></div>
-                
+                <div className={`absolute left-0 top-0 bottom-0 w-1 ${visit.status === 'In Progress' ? 'bg-orange-500' : visit.status === 'Completed' ? 'bg-green-500' : visit.status === 'Checked Out' ? 'bg-yellow-500' : 'bg-blue-500'}`}></div>
                 <div className="flex flex-col items-center justify-center bg-blue-50 px-3 rounded-xl text-blue-800 h-14 w-14 shrink-0 ml-2">
                     <span className="text-[10px] font-bold uppercase">{new Date(visit.date).toLocaleString('default', { month: 'short' })}</span>
                     <span className="text-lg font-bold">{new Date(visit.date).getDate()}</span>
                 </div>
                 <div className="flex-1">
                     <div className="flex justify-between items-start">
-                    <div>
-                        <h4 className="font-bold text-gray-800">{customer?.name}</h4>
-                        <p className="text-sm text-gray-500 truncate max-w-[150px]">{visit.notes}</p>
-                    </div>
+                    <div><h4 className="font-bold text-gray-800">{customer?.name}</h4><p className="text-sm text-gray-500 truncate max-w-[150px]">{visit.notes}</p></div>
                     {actionButton}
                     </div>
-                    
                     <div className="flex gap-2 mt-2">
-                       <span className={`text-[10px] px-2 py-0.5 rounded-md flex items-center gap-1 font-medium ${visit.status === 'In Progress' ? 'bg-orange-100 text-orange-700' : visit.status === 'Checked Out' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>
-                         {visit.status === 'In Progress' ? <Clock size={10}/> : <Calendar size={10}/>} {visit.status}
-                       </span>
+                       <span className={`text-[10px] px-2 py-0.5 rounded-md flex items-center gap-1 font-medium ${visit.status === 'In Progress' ? 'bg-orange-100 text-orange-700' : visit.status === 'Checked Out' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>{visit.status === 'In Progress' ? <Clock size={10}/> : <Calendar size={10}/>} {visit.status}</span>
                     </div>
                 </div>
                 </div>
@@ -779,10 +649,10 @@ const VisitsView = ({ visits, onSelectVisit, onAction }) => {
   );
 };
 
+
 const VisitDetailView = ({ visit, onClose, onCheckIn, onCheckOut, onFeedback }) => {
   const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
   const contact = MOCK_CONTACTS.find(c => c.id === visit.contactId);
-
   return (
     <div className="pb-24 bg-white min-h-screen">
       <div className="bg-blue-600 text-white p-6 pb-10 rounded-b-3xl relative">
@@ -791,196 +661,75 @@ const VisitDetailView = ({ visit, onClose, onCheckIn, onCheckOut, onFeedback }) 
         </button>
         <div className="mt-8">
           <div className="flex gap-2 mb-3">
-            <span className="inline-flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-bold">
-              <Calendar size={12}/> {visit.date}
-            </span>
-            {visit.time && (
-              <span className="inline-flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-bold">
-                <Clock size={12}/> {visit.time}
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-bold"><Calendar size={12}/> {visit.date}</span>
+            {visit.time && <span className="inline-flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-bold"><Clock size={12}/> {visit.time}</span>}
           </div>
           <h2 className="text-2xl font-bold">{customer?.name}</h2>
           <p className="opacity-90 text-sm flex items-center gap-1.5 mt-1"><MapPin size={14}/> {customer?.address}</p>
         </div>
       </div>
-
       <div className="px-5 -mt-8 space-y-4">
         <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
           <div className="flex justify-between items-center mb-3">
-              <div>
-              <p className="text-xs text-gray-500 font-bold uppercase">Current Status</p>
-              <p className={`text-lg font-bold ${visit.status === 'Completed' ? 'text-green-600' : visit.status === 'In Progress' ? 'text-orange-600' : 'text-blue-600'}`}>
-                  {visit.status}
-              </p>
-              </div>
-              <div className={`p-3 rounded-full ${visit.status === 'Completed' ? 'bg-green-100 text-green-600' : visit.status === 'In Progress' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
-              {visit.status === 'Completed' ? <CheckCircle size={24}/> : <Clock size={24}/>}
-              </div>
+              <div><p className="text-xs text-gray-500 font-bold uppercase">Current Status</p><p className={`text-lg font-bold ${visit.status === 'Completed' ? 'text-green-600' : visit.status === 'In Progress' ? 'text-orange-600' : 'text-blue-600'}`}>{visit.status}</p></div>
+              <div className={`p-3 rounded-full ${visit.status === 'Completed' ? 'bg-green-100 text-green-600' : visit.status === 'In Progress' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>{visit.status === 'Completed' ? <CheckCircle size={24}/> : <Clock size={24}/>}</div>
           </div>
-          
           {(visit.checkInTime || visit.location) && (
               <div className="pt-3 border-t border-gray-100 grid grid-cols-2 gap-4">
-                  {visit.checkInTime && (
-                      <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-bold flex items-center gap-1"><PlayCircle size={10}/> Checked In</p>
-                          <p className="text-sm font-bold text-gray-800">{visit.checkInTime}</p>
-                      </div>
-                  )}
-                  {visit.checkOutTime && (
-                      <div className="text-right">
-                          <p className="text-[10px] text-gray-400 uppercase font-bold flex items-center justify-end gap-1"><StopCircle size={10}/> Checked Out</p>
-                          <p className="text-sm font-bold text-gray-800">{visit.checkOutTime}</p>
-                      </div>
-                  )}
-                  {visit.location && (
-                      <div className="col-span-2 mt-1 bg-gray-50 p-2 rounded-lg flex items-start gap-2">
-                          <Navigation size={14} className="text-blue-500 mt-0.5 shrink-0"/>
-                          <div>
-                              <p className="text-[10px] text-gray-400 uppercase font-bold">Location Captured</p>
-                              <p className="text-xs text-gray-700">{visit.location}</p>
-                          </div>
-                      </div>
-                  )}
+                  {visit.checkInTime && <div><p className="text-[10px] text-gray-400 uppercase font-bold flex items-center gap-1"><PlayCircle size={10}/> Checked In</p><p className="text-sm font-bold text-gray-800">{visit.checkInTime}</p></div>}
+                  {visit.checkOutTime && <div className="text-right"><p className="text-[10px] text-gray-400 uppercase font-bold flex items-center justify-end gap-1"><StopCircle size={10}/> Checked Out</p><p className="text-sm font-bold text-gray-800">{visit.checkOutTime}</p></div>}
+                  {visit.location && <div className="col-span-2 mt-1 bg-gray-50 p-2 rounded-lg flex items-start gap-2"><Navigation size={14} className="text-blue-500 mt-0.5 shrink-0"/><div><p className="text-[10px] text-gray-400 uppercase font-bold">Location Captured</p><p className="text-xs text-gray-700">{visit.location}</p></div></div>}
               </div>
           )}
         </div>
-
         {contact && (
           <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
             <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm uppercase text-indigo-600"><User size={16}/> Meeting With</h3>
-            <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-               <p className="font-bold text-indigo-900">{contact.name}</p>
-               <p className="text-xs text-indigo-600 mb-1">{contact.designation}</p>
-               <p className="text-xs text-gray-600 font-mono">{contact.phone} • {contact.email}</p>
-            </div>
+            <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100"><p className="font-bold text-indigo-900">{contact.name}</p><p className="text-xs text-indigo-600 mb-1">{contact.designation}</p><p className="text-xs text-gray-600 font-mono">{contact.phone} • {contact.email}</p></div>
           </div>
         )}
-
         <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm uppercase text-blue-600"><FileText size={16}/> Agenda</h3>
-          <p className="text-gray-700 text-sm leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">
-            {visit.notes || 'No specific agenda.'}
-          </p>
+          <p className="text-gray-700 text-sm leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">{visit.notes || 'No specific agenda.'}</p>
         </div>
-
-        {visit.status === 'Planned' && (
-           <button 
-              onClick={() => onCheckIn(visit)}
-              className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"
-           >
-              <PlayCircle size={20}/> Check In Now
-           </button>
-        )}
-
-        {visit.status === 'In Progress' && (
-           <button 
-              onClick={() => onCheckOut(visit)}
-              className="w-full bg-orange-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-orange-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform animate-pulse"
-           >
-              <StopCircle size={20}/> Check Out
-           </button>
-        )}
-
-        {visit.status === 'Checked Out' && (
-           <button 
-              onClick={() => onFeedback(visit)}
-              className="w-full bg-yellow-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-yellow-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"
-           >
-              <FileText size={20}/> Submit Report
-           </button>
-        )}
-
+        {visit.status === 'Planned' && <button onClick={() => onCheckIn(visit)} className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"><PlayCircle size={20}/> Check In Now</button>}
+        {visit.status === 'In Progress' && <button onClick={() => onCheckOut(visit)} className="w-full bg-orange-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-orange-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform animate-pulse"><StopCircle size={20}/> Check Out</button>}
+        {visit.status === 'Checked Out' && <button onClick={() => onFeedback(visit)} className="w-full bg-yellow-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-yellow-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"><FileText size={20}/> Submit Report</button>}
         {visit.status === 'Completed' && (
           <>
             <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
-              <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm uppercase text-purple-600">
-                <MessageSquare size={16}/> Meeting Minutes
-              </h3>
-              <p className="text-gray-700 text-sm leading-relaxed bg-purple-50 p-3 rounded-xl border border-purple-100">
-                {visit.minutes || 'No detailed minutes recorded.'}
-              </p>
+              <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm uppercase text-purple-600"><MessageSquare size={16}/> Meeting Minutes</h3>
+              <p className="text-gray-700 text-sm leading-relaxed bg-purple-50 p-3 rounded-xl border border-purple-100">{visit.minutes || 'No detailed minutes recorded.'}</p>
             </div>
-
             <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm uppercase text-amber-600"><Lightbulb size={16}/> Outcomes</h3>
-              <div className="flex flex-wrap gap-2">
-                {visit.feedback && visit.feedback.length > 0 ? (
-                  visit.feedback.map((fb, i) => (
-                    <span key={i} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-bold border border-amber-100 flex items-center gap-1">
-                      <CheckCircle size={12}/> {fb}
-                    </span>
-                  ))
-                ) : (
-                  <p className="text-gray-400 text-sm italic">No action points recorded.</p>
-                )}
-              </div>
+              <div className="flex flex-wrap gap-2">{visit.feedback && visit.feedback.length > 0 ? visit.feedback.map((fb, i) => <span key={i} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-bold border border-amber-100 flex items-center gap-1"><CheckCircle size={12}/> {fb}</span>) : <p className="text-gray-400 text-sm italic">No action points recorded.</p>}</div>
             </div>
-
              <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-800 mb-0.5 flex items-center gap-2 text-sm uppercase text-red-600">
-                  <CalendarDays size={16}/> Next Follow-up
-                </h3>
-              </div>
-              <div className="bg-red-50 text-red-600 font-bold px-3 py-1.5 rounded-lg text-sm border border-red-100">
-                {visit.nextFollowUp || 'Not Set'}
-              </div>
+              <div><h3 className="font-bold text-gray-800 mb-0.5 flex items-center gap-2 text-sm uppercase text-red-600"><CalendarDays size={16}/> Next Follow-up</h3></div>
+              <div className="bg-red-50 text-red-600 font-bold px-3 py-1.5 rounded-lg text-sm border border-red-100">{visit.nextFollowUp || 'Not Set'}</div>
             </div>
-
             <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm uppercase text-indigo-600"><Factory size={16}/> Production Info</h3>
-              
               {visit.productionInfo ? (
                 <div className="space-y-3">
-                   <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-indigo-50 p-3 rounded-xl">
-                         <p className="text-xs text-indigo-400 font-bold uppercase">Running Line</p>
-                         <p className="font-bold text-indigo-900 text-sm">{visit.productionInfo.line}</p>
-                      </div>
-                      <div className="bg-indigo-50 p-3 rounded-xl">
-                         <p className="text-xs text-indigo-400 font-bold uppercase">Quantity</p>
-                         <p className="font-bold text-indigo-900 text-sm">{visit.productionInfo.qty} pcs</p>
-                      </div>
-                   </div>
-                   
-                   <div>
-                      <p className="text-xs text-gray-500 font-bold mb-2 uppercase">Running Brands</p>
-                      <div className="flex flex-wrap gap-2">
-                         {visit.productionInfo.brands.map(brandId => {
-                            const brandName = MOCK_BRANDS.find(b => b.id === brandId)?.name;
-                            return (
-                              <span key={brandId} className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium border">
-                                {brandName}
-                              </span>
-                            );
-                         })}
-                      </div>
-                   </div>
+                   <div className="grid grid-cols-2 gap-3"><div className="bg-indigo-50 p-3 rounded-xl"><p className="text-xs text-indigo-400 font-bold uppercase">Running Line</p><p className="font-bold text-indigo-900 text-sm">{visit.productionInfo.line}</p></div><div className="bg-indigo-50 p-3 rounded-xl"><p className="text-xs text-indigo-400 font-bold uppercase">Quantity</p><p className="font-bold text-indigo-900 text-sm">{visit.productionInfo.qty} pcs</p></div></div>
+                   <div><p className="text-xs text-gray-500 font-bold mb-2 uppercase">Running Brands</p><div className="flex flex-wrap gap-2">{visit.productionInfo.brands.map(brandId => { const brandName = MOCK_BRANDS.find(b => b.id === brandId)?.name; return (<span key={brandId} className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium border">{brandName}</span>); })}</div></div>
                 </div>
-              ) : (
-                <p className="text-gray-400 text-sm italic">No production info.</p>
-              )}
+              ) : (<p className="text-gray-400 text-sm italic">No production info.</p>)}
             </div>
-
-             <button 
-                onClick={() => onFeedback(visit)}
-                className="w-full bg-blue-100 text-blue-700 py-3.5 rounded-xl font-bold shadow-sm border border-blue-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"
-             >
-                <PenTool size={20}/> Update Report
-             </button>
+             <button onClick={() => onFeedback(visit)} className="w-full bg-blue-100 text-blue-700 py-3.5 rounded-xl font-bold shadow-sm border border-blue-200 flex items-center justify-center gap-2 mt-4 text-base active:scale-95 transition-transform"><PenTool size={20}/> Update Report</button>
           </>
         )}
-
       </div>
     </div>
   );
 };
 
+
 const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVisit }) => {
   const customerContacts = MOCK_CONTACTS.filter(c => c.customerId === customer.id);
   const linkedBrands = MOCK_BRANDS.filter(b => customer.brandIds.includes(b.id));
-
   return (
     <div className="pb-24 bg-white min-h-screen">
       <div className="bg-blue-900 text-white p-6 pb-12 rounded-b-3xl relative">
@@ -995,7 +744,6 @@ const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVis
           <p className="opacity-80 flex items-center justify-center gap-1.5 mt-1"><MapPin size={16}/> {customer.address}</p>
         </div>
       </div>
-
       <div className="px-5 -mt-8 space-y-4">
         <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-3 border-b pb-2 flex items-center gap-2">
@@ -1025,7 +773,6 @@ const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVis
             <p className="text-sm text-gray-400 italic">No contacts added.</p>
           )}
         </div>
-
         <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
            <h3 className="font-bold text-gray-800 mb-3 border-b pb-2 flex items-center gap-2">
             <Tags size={18} className="text-purple-600"/> Associated Brands
@@ -1038,7 +785,6 @@ const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVis
             ))}
           </div>
         </div>
-
         <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-3 border-b pb-2 flex items-center gap-2">
             <Clock size={18} className="text-orange-600"/> Visit History
@@ -1053,7 +799,6 @@ const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVis
              </div>
           ))}
         </div>
-        
         <button onClick={onPlanVisit} className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200 text-base active:scale-95 transition-transform">
           Schedule New Visit
         </button>
@@ -1064,7 +809,6 @@ const CustomerDetailView = ({ customer, onBack, onPlanVisit, visits, onSelectVis
 
 const BrandDetailView = ({ brand, onBack, onSelectCustomer }) => {
   const suppliers = MOCK_CUSTOMERS.filter(c => c.brandIds.includes(brand.id));
-
   return (
     <div className="pb-24 bg-white min-h-screen">
        <div className="bg-purple-900 text-white p-6 pb-12 rounded-b-3xl relative">
@@ -1079,7 +823,6 @@ const BrandDetailView = ({ brand, onBack, onSelectCustomer }) => {
           <p className="opacity-80">{brand.origin} • {brand.segment}</p>
         </div>
       </div>
-
       <div className="px-5 -mt-8">
          <div className="bg-white rounded-2xl shadow-lg p-5 mb-4 border border-gray-100">
            <h3 className="font-bold text-gray-800 mb-3 border-b pb-2">Active Suppliers</h3>
@@ -1106,7 +849,6 @@ const BrandDetailView = ({ brand, onBack, onSelectCustomer }) => {
 
 const ProductDetailView = ({ product, onBack }) => {
   const maxVal = Math.max(...product.history);
-
   return (
     <div className="pb-24 bg-white min-h-screen">
       <div className="bg-orange-600 text-white p-6 pb-10 rounded-b-3xl relative">
@@ -1121,13 +863,11 @@ const ProductDetailView = ({ product, onBack }) => {
           </div>
         </div>
       </div>
-
       <div className="px-5 -mt-6">
         <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
              <TrendingUp size={20} className="text-orange-600"/> 6-Month Sales Trend
            </h3>
-           
            <div className="flex items-end justify-between h-32 gap-2">
               {product.history.map((val, idx) => (
                 <div key={idx} className="flex-1 flex flex-col justify-end items-center group">
@@ -1140,7 +880,6 @@ const ProductDetailView = ({ product, onBack }) => {
               ))}
            </div>
         </div>
-
         <div className="mt-4 bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-3">Performance Stats</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -1161,17 +900,19 @@ const ProductDetailView = ({ product, onBack }) => {
   );
 };
 
+
+// --- TEAM VISITS VIEW ---
 const TeamVisitsView = ({ visits, onNavigate }) => {
   const [teamFilter, setTeamFilter] = useState('Today');
   const [selectedMember, setSelectedMember] = useState(null);
-
+  const [selectedSuggestion, setSelectedSuggestion] = useState('');
   const totalPlanned = MOCK_TEAM_MEMBERS.reduce((acc, curr) => acc + curr.planned, 0);
   const totalVisited = MOCK_TEAM_MEMBERS.reduce((acc, curr) => acc + curr.visited, 0);
   const overallSuccess = Math.round((totalVisited / totalPlanned) * 100);
-
+  const memberVisits = selectedMember 
+    ? visits.filter(v => v.userId === selectedMember.id || (selectedMember.id === 1 && !v.userId)) 
+    : [];
   if (selectedMember) {
-    const memberVisits = visits.filter(v => v.userId === selectedMember.id || (selectedMember.id === 1 && !v.userId));
-
     return (
       <div className="pb-24 bg-white min-h-screen">
         <div className="bg-blue-600 text-white p-6 pb-10 rounded-b-3xl relative">
@@ -1186,7 +927,6 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
             <p className="opacity-80 text-sm">{selectedMember.role}</p>
           </div>
         </div>
-
         <div className="px-5 -mt-8">
           <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 mb-4">
             <h3 className="font-bold text-gray-800 mb-3 border-b pb-2 text-sm uppercase text-gray-500">Performance ({teamFilter})</h3>
@@ -1205,16 +945,29 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
               </div>
             </div>
           </div>
-
-          <div className="flex justify-between items-center mb-3">
-             <h3 className="font-bold text-gray-800">Visit Log</h3>
-             <div className="flex gap-1">
-               {['Today', 'Week', 'Month'].map(f => (
-                 <FilterChip key={f} label={f} active={teamFilter === f} onClick={() => setTeamFilter(f)} />
-               ))}
+          <div className="bg-purple-50 rounded-2xl p-5 border border-purple-100 mb-4">
+             <h3 className="font-bold text-purple-800 mb-3 flex items-center gap-2 text-sm"><Lightbulb size={16}/> Supervisor Feedback</h3>
+             <div className="relative mb-2">
+               <select 
+                 className="w-full border border-purple-200 p-3 rounded-xl bg-white text-sm appearance-none"
+                 value={selectedSuggestion}
+                 onChange={(e) => setSelectedSuggestion(e.target.value)}
+               >
+                 <option value="">Select Improvement Suggestion...</option>
+                 {SUGGESTION_OPTIONS.map((opt, idx) => (
+                   <option key={idx} value={opt}>{opt}</option>
+                 ))}
+               </select>
+               <ChevronDown className="absolute right-3 top-3.5 text-gray-400 pointer-events-none" size={16}/>
              </div>
+             <button 
+               disabled={!selectedSuggestion}
+               className="w-full bg-purple-600 text-white py-2.5 rounded-xl font-bold text-sm shadow-md disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+             >
+               <Send size={16}/> Send Suggestion
+             </button>
           </div>
-
+          <h3 className="font-bold text-gray-800 mb-3">Visit Log</h3>
           <div className="space-y-3">
             {memberVisits.length > 0 ? memberVisits.map(visit => {
               const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
@@ -1241,20 +994,17 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
       </div>
     );
   }
-
   return (
     <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
       <div className="flex items-center gap-3 mb-5">
         <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
         <h2 className="text-2xl font-bold text-gray-800">Team Visits</h2>
       </div>
-
       <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
            {['Today', 'Week', 'Month'].map(f => (
                <FilterChip key={f} label={f} active={teamFilter === f} onClick={() => setTeamFilter(f)} />
            ))}
       </div>
-
       <div className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100">
          <h3 className="text-gray-500 font-bold uppercase text-xs mb-4 tracking-wider">Overall Team Status</h3>
          <div className="flex items-center justify-between px-4">
@@ -1280,7 +1030,6 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
             </div>
          </div>
       </div>
-
       <h3 className="font-bold text-gray-800 mb-3 text-lg">Member Summary</h3>
       <div className="space-y-3">
         {MOCK_TEAM_MEMBERS.map(member => {
@@ -1313,14 +1062,17 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
   );
 };
 
+
+// --- UPDATED: Target vs Achievement View ---
 const TargetVsAchievementView = ({ onNavigate }) => {
   const [selectedPerson, setSelectedPerson] = useState(null);
+  const [insightTab, setInsightTab] = useState('clients');
   const totalTarget = MOCK_PERSON_SALES.reduce((acc, curr) => acc + curr.target, 0);
   const totalAchieved = MOCK_PERSON_SALES.reduce((acc, curr) => acc + curr.achieved, 0);
   const totalPct = (totalAchieved / totalTarget) * 100;
-
   if (selectedPerson) {
     const maxVal = Math.max(...selectedPerson.history);
+    const listData = insightTab === 'clients' ? selectedPerson.topClients : (selectedPerson.topBrands || []);
     return (
       <div className="pb-24 bg-white min-h-screen">
         <div className="bg-orange-600 text-white p-6 pb-10 rounded-b-3xl relative">
@@ -1336,7 +1088,6 @@ const TargetVsAchievementView = ({ onNavigate }) => {
             <p className="text-xs text-orange-100 mt-1">Target: {formatCurrency(selectedPerson.target)}</p>
           </div>
         </div>
-
         <div className="px-5 -mt-6">
           <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 mb-4">
              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -1351,31 +1102,43 @@ const TargetVsAchievementView = ({ onNavigate }) => {
                 ))}
              </div>
           </div>
-
-          <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2"><Trophy size={18} className="text-yellow-500"/> Top 5 Clients</h3>
+          <div className="flex bg-gray-100 p-1 rounded-xl mb-4">
+            <button 
+              onClick={() => setInsightTab('clients')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${insightTab === 'clients' ? 'bg-white shadow text-gray-800' : 'text-gray-500'}`}
+            >
+              Top 5 Clients
+            </button>
+            <button 
+              onClick={() => setInsightTab('brands')}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${insightTab === 'brands' ? 'bg-white shadow text-gray-800' : 'text-gray-500'}`}
+            >
+              Top 5 Brands
+            </button>
+          </div>
           <div className="space-y-2">
-             {selectedPerson.topClients.map((client, i) => (
+             {listData.length > 0 ? listData.map((item, i) => (
                <div key={i} className="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                  <div className="flex items-center gap-3">
-                   <span className="w-6 h-6 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xs font-bold">{i+1}</span>
-                   <span className="font-bold text-gray-700 text-sm">{client.name}</span>
+                   <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${i===0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>{i+1}</span>
+                   <span className="font-bold text-gray-700 text-sm">{item.name}</span>
                  </div>
-                 <span className="text-sm font-bold text-green-600">{formatCurrency(client.value)}</span>
+                 <span className="text-sm font-bold text-green-600">{formatCurrency(item.value)}</span>
                </div>
-             ))}
+             )) : (
+               <p className="text-center text-gray-400 text-sm py-4">No data available.</p>
+             )}
           </div>
         </div>
       </div>
     );
   }
-
   return (
     <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
       <div className="flex items-center gap-3 mb-5">
         <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
         <h2 className="text-2xl font-bold text-gray-800">Target vs Achievement</h2>
       </div>
-
       <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
         <div className="relative z-10">
             <p className="text-orange-100 text-sm font-medium mb-1">Total Achievement</p>
@@ -1393,7 +1156,6 @@ const TargetVsAchievementView = ({ onNavigate }) => {
         </div>
         <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
       </div>
-
       <h3 className="font-bold text-gray-800 mb-3">Marketing Person Wise</h3>
       <div className="space-y-3">
         {MOCK_PERSON_SALES.map((person) => {
@@ -1437,7 +1199,6 @@ const MoreView = ({ onNavigate, setClientTab }) => {
     { id: 'challan', label: 'Challan', icon: <ScrollText size={24}/>, color: 'text-gray-600', bg: 'bg-gray-200' },
     { id: 'decision', label: 'Decision Points', icon: <Lightbulb size={24}/>, color: 'text-amber-600', bg: 'bg-amber-100' },
   ];
-
   return (
     <div className="pb-24 pt-6 px-5 h-full overflow-y-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-5">More Features</h2>
@@ -1472,7 +1233,39 @@ const MoreView = ({ onNavigate, setClientTab }) => {
   );
 };
 
-// Main App Component
+const NotificationView = ({ onNavigate }) => {
+  const notifications = [
+    { id: 1, type: 'success', title: 'Visit Completed', message: 'You successfully checked out from Ha-Meem Group.', time: '10 mins ago', read: false },
+    { id: 2, type: 'alert', title: 'Target Alert', message: 'You have reached 80% of your monthly sales target!', time: '1 hour ago', read: false },
+    { id: 3, type: 'info', title: 'New Price List', message: 'Admin updated the price list for Woven Interlining.', time: 'Yesterday', read: true },
+  ];
+  return (
+    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto bg-gray-50">
+       <div className="flex items-center gap-3 mb-5 sticky top-0 bg-gray-50 z-10 py-2">
+        <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
+        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
+      </div>
+      <div className="space-y-3">
+        {notifications.map(notif => (
+          <div key={notif.id} className={`p-4 rounded-2xl border flex gap-4 items-start ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
+             <div className={`p-2.5 rounded-full shrink-0 ${notif.type === 'success' ? 'bg-green-100 text-green-600' : notif.type === 'alert' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
+                {notif.type === 'success' ? <CheckCircle size={20}/> : notif.type === 'alert' ? <Target size={20}/> : <Info size={20}/>}
+             </div>
+             <div className="flex-1">
+                <h4 className={`font-bold text-sm mb-1 ${notif.read ? 'text-gray-700' : 'text-gray-900'}`}>{notif.title}</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">{notif.message}</p>
+                <span className="text-[10px] text-gray-400 mt-2 block">{notif.time}</span>
+             </div>
+             {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+// --- Main App Component ---
 export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -1484,56 +1277,10 @@ export default function App() {
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(null);
   const [isMobileView, setIsMobileView] = useState(true);
-
   const [visits, setVisits] = useState([
-    { 
-      id: 101, 
-      customerId: 1, 
-      contactId: 1, 
-      date: getDateString(0), 
-      time: '10:30 AM',
-      status: 'Completed', 
-      notes: 'Sample submitted for Approval',
-      checkInTime: '10:15 AM', 
-      checkOutTime: '11:00 AM', 
-      location: 'Tejgaon, Dhaka (23.76, 90.39)', 
-      minutes: 'Met with GM. He liked the 3040 sample.',
-      nextFollowUp: '2023-10-30',
-      feedback: ['Sample Submitted'],
-      productionInfo: { line: 'Line-A', qty: '5000', brands: [1] }
-    },
-    { 
-      id: 102, 
-      customerId: 2, 
-      contactId: 3,
-      date: getDateString(0), 
-      time: '',
-      status: 'Planned', 
-      notes: 'Price negotiation for Winter season',
-      checkInTime: null,
-      checkOutTime: null,
-      location: null,
-      minutes: '',
-      nextFollowUp: '',
-      feedback: [],
-      productionInfo: null
-    },
-    { 
-      id: 103, 
-      customerId: 3, 
-      contactId: 4,
-      date: getDateString(1), 
-      time: '',
-      status: 'Planned', 
-      notes: 'Monthly Payment Collection',
-      checkInTime: null,
-      checkOutTime: null,
-      location: null,
-      minutes: '',
-      nextFollowUp: '',
-      feedback: [],
-      productionInfo: null
-    },
+    { id: 101, customerId: 1, contactId: 1, userId: 1, date: getDateString(0), time: '10:30 AM', status: 'Completed', notes: 'Sample submitted', checkInTime: '10:15 AM', checkOutTime: '11:00 AM', location: 'Tejgaon', minutes: 'Met with GM', nextFollowUp: '2023-10-30', feedback: ['Sample Submitted'], productionInfo: { line: 'A', qty: '5000', brands: [1] } },
+    { id: 102, customerId: 2, contactId: 3, userId: 1, date: getDateString(0), time: '', status: 'Planned', notes: 'Price negotiation', checkInTime: null, checkOutTime: null, location: null, minutes: '', nextFollowUp: '', feedback: [], productionInfo: null },
+    { id: 103, customerId: 3, contactId: 4, userId: 1, date: getDateString(1), time: '', status: 'Planned', notes: 'Collection', checkInTime: null, checkOutTime: null, location: null, minutes: '', nextFollowUp: '', feedback: [], productionInfo: null },
   ]);
 
   const handleNav = (view) => {
@@ -1548,28 +1295,13 @@ export default function App() {
   const handleCheckIn = (visit) => {
     const simulatedLocation = "Lat: 23.8103, Long: 90.4125";
     const currentTime = getTimeString();
-
-    const updatedVisits = visits.map(v => 
-      v.id === visit.id ? {
-        ...v,
-        status: 'In Progress',
-        checkInTime: currentTime,
-        location: simulatedLocation
-      } : v
-    );
+    const updatedVisits = visits.map(v => v.id === visit.id ? {...v, status: 'In Progress', checkInTime: currentTime, location: simulatedLocation} : v);
     setVisits(updatedVisits);
   };
 
   const handleCheckOut = (visit) => {
     const currentTime = getTimeString();
-
-    const updatedVisits = visits.map(v => 
-      v.id === visit.id ? {
-        ...v,
-        status: 'Checked Out',
-        checkOutTime: currentTime
-      } : v
-    );
+    const updatedVisits = visits.map(v => v.id === visit.id ? {...v, status: 'Checked Out', checkOutTime: currentTime} : v);
     setVisits(updatedVisits);
   };
 
@@ -1578,9 +1310,7 @@ export default function App() {
   };
 
   const handleFeedbackSubmit = (id, updatedData) => {
-    const updatedVisits = visits.map(v => 
-      v.id === id ? { ...v, ...updatedData } : v
-    );
+    const updatedVisits = visits.map(v => v.id === id ? { ...v, ...updatedData } : v);
     setVisits(updatedVisits);
     setShowFeedbackModal(null);
   };
@@ -1616,10 +1346,12 @@ export default function App() {
             {currentView === 'more' && <MoreView onNavigate={handleNav} setClientTab={setClientTab} />}
             {currentView === 'team_visits' && <TeamVisitsView visits={visits} onNavigate={handleNav} />}
             {currentView === 'target_vs_achv' && <TargetVsAchievementView onNavigate={handleNav} />}
+            {currentView === 'sales_detail' && <SalesView onSelectProduct={setSelectedProduct} onNavigate={handleNav}/>}
+            {currentView === 'team_report' && <TeamVisitsView visits={visits} onNavigate={handleNav}/>}
+            {currentView === 'notifications' && <NotificationView onNavigate={handleNav}/>}
           </>
         )}
        </main>
-
        {!selectedVisit && !selectedCustomer && !selectedBrand && !selectedProduct && (
         <nav className="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center fixed bottom-0 w-full z-40 pb-5 transition-all duration-300" style={{ maxWidth: isMobileView ? '28rem' : '100%' }}>
           {showQuickMenu && (
@@ -1646,7 +1378,6 @@ export default function App() {
           <button onClick={() => handleNav('more')} className={`flex flex-col items-center gap-1 ${['more', 'sales_detail', 'team_report', 'team_visits', 'target_vs_achv'].includes(currentView) ? 'text-blue-600' : 'text-gray-400'}`}><MoreHorizontal size={24} strokeWidth={['more', 'sales_detail', 'team_report'].includes(currentView) ? 2.5 : 2} /><span className="text-[10px] font-bold">More</span></button>
         </nav>
        )}
-
        <AddVisitModal isOpen={showPlanModal} onClose={() => setShowPlanModal(false)} onSave={handleSaveVisit} />
        <FeedbackModal visit={showFeedbackModal} onClose={() => setShowFeedbackModal(null)} onSave={handleFeedbackSubmit} />
     </div>

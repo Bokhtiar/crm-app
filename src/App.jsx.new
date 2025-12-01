@@ -1,0 +1,325 @@
+import React, { useState } from 'react';
+
+import { 
+  LayoutDashboard, 
+  Users, 
+  Calendar, 
+  TrendingUp, 
+  Plus, 
+  MapPin, 
+  Phone, 
+  Briefcase, 
+  CheckCircle, 
+  Clock, 
+  ChevronRight,
+  Menu,
+  X,
+  FileText,
+  Search,
+  User,
+  Tags,
+  BarChart2,
+  ArrowLeft,
+  MoreHorizontal,
+  Factory,
+  Swords,
+  StickyNote,
+  Package,
+  Globe,
+  Truck,
+  ClipboardCheck,
+  ScrollText,
+  Lightbulb,
+  Building2,
+  CheckSquare,
+  Square,
+  PieChart,
+  UserCheck,
+  Filter,
+  SlidersHorizontal,
+  Info,
+  CalendarDays,
+  MessageSquare,
+  Mail,
+  UserPlus,
+  Target,
+  Percent,
+  PlayCircle,
+  StopCircle,
+  Navigation,
+  PenTool,
+  LogOut,
+  Edit,
+  Monitor,
+  Smartphone,
+  Trophy,
+  ChevronDown,
+  Send,
+  Bell,
+  AlertCircle,
+  Check
+} from 'lucide-react';
+
+// --- Helpers ---
+const getDateString = (offset = 0) => {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().split('T')[0];
+};
+
+const getTimeString = () => {
+  return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+};
+
+const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+
+// --- Constants ---
+const VISIT_PURPOSES = [
+  "Relationship Buildup",
+  "Requirement Collection",
+  "Sample Collection",
+  "Counter Sample Providing",
+  "Quality Checking by Customer",
+  "Sample Making by Customer",
+  "Waiting for Quality Approval",
+  "Price Negotiation",
+  "Waiting for Booking",
+  "Booking Received"
+];
+
+const SUGGESTION_OPTIONS = [
+  "Increase Client Visit Frequency",
+  "Focus on Payment Collection",
+  "Improve Product Knowledge",
+  "Target High-Value Clients",
+  "Better Time Management",
+  "Follow-up on Pending Samples"
+];
+
+// --- Mock Data ---
+const MOCK_NOTIFICATIONS = [
+  { id: 1, type: 'success', title: 'Visit Completed', message: 'You successfully checked out from Ha-Meem Group.', time: '10 mins ago', read: false },
+  { id: 2, type: 'alert', title: 'Target Alert', message: 'You have reached 80% of your monthly sales target!', time: '1 hour ago', read: false },
+  { id: 3, type: 'info', title: 'New Price List', message: 'Admin updated the price list for Woven Interlining.', time: 'Yesterday', read: true },
+  { id: 4, type: 'reminder', title: 'Pending Feedback', message: 'Please submit the report for Beximco visit.', time: '2 days ago', read: true },
+];
+
+const MOCK_CUSTOMERS = [
+  { id: 1, name: 'Ha-Meem Group', address: 'Tejgaon, Dhaka', type: 'Woven', contact: '01711-000000', brandIds: [1, 3] },
+  { id: 2, name: 'Beximco Textiles', address: 'Gazipur', type: 'Denim', contact: '01811-000000', brandIds: [2, 4] },
+  { id: 3, name: 'Palmal Group', address: 'Ashulia', type: 'Knit', contact: '01911-000000', brandIds: [3, 5] },
+  { id: 4, name: 'Envoy Textiles', address: 'Mymensingh', type: 'Denim', contact: '01611-000000', brandIds: [1, 2] },
+  { id: 5, name: 'Square Fashions', address: 'Valuka', type: 'Knit', contact: '01511-000000', brandIds: [3, 4] },
+];
+
+const MOCK_BRANDS = [
+  { id: 1, name: 'H&M', segment: 'Retail', origin: 'Sweden' },
+  { id: 2, name: 'Zara', segment: 'Fast Fashion', origin: 'Spain' },
+  { id: 3, name: 'Gap', segment: 'Casual', origin: 'USA' },
+  { id: 4, name: 'Uniqlo', segment: 'Lifestyle', origin: 'Japan' },
+  { id: 5, name: 'Next', segment: 'Retail', origin: 'UK' },
+];
+
+const MOCK_CONTACTS = [
+  { id: 1, customerId: 1, name: 'Mr. Rahim', designation: 'GM (Production)', phone: '01711-111111', email: 'rahim@hameem.com' },
+  { id: 2, customerId: 1, name: 'Ms. Fatema', designation: 'Sr. Merchandiser', phone: '01711-222222', email: 'fatema@hameem.com' },
+  { id: 3, customerId: 2, name: 'Mr. Karim', designation: 'Director', phone: '01811-333333', email: 'karim@beximco.com' },
+  { id: 4, customerId: 3, name: 'Mr. Sazzad', designation: 'Procurement Mgr', phone: '01911-444444', email: 'sazzad@palmal.com' },
+  { id: 5, customerId: 4, name: 'Mr. Tanvir', designation: 'DGM (Fabric)', phone: '01611-555555', email: 'tanvir@envoy.com' },
+  { id: 6, customerId: 5, name: 'Ms. Sadia', designation: 'Head of Design', phone: '01511-666666', email: 'sadia@square.com' },
+];
+
+const MOCK_SALES_DATA = {
+  monthlyTarget: 500000,
+  achieved: 325000,
+  products: [
+    { id: 'p1', name: 'Woven Interlining 3040', target: 200000, achieved: 150000, history: [120000, 140000, 130000, 160000, 180000, 150000] },
+    { id: 'p2', name: 'Non-Woven 1025', target: 150000, achieved: 80000, history: [60000, 70000, 60000, 80000, 90000, 80000] },
+    { id: 'p3', name: 'Micro Dot Fusible', target: 150000, achieved: 95000, history: [80000, 80000, 90000, 90000, 100000, 95000] },
+  ]
+};
+
+const FEEDBACK_OPTIONS = [
+  "Sample Submitted", "Price Negotiation", "Order Received", "Complaint Received", "Competitor Info", "Payment Follow-up"
+];
+
+const MOCK_TEAM_MEMBERS = [
+  { id: 1, name: 'Arif (You)', role: 'Sr. Exec', planned: 5, visited: 4, color: 'bg-green-500' },
+  { id: 2, name: 'Hassan', role: 'Executive', planned: 8, visited: 3, color: 'bg-red-500' },
+  { id: 3, name: 'Rubel', role: 'Asst. Mgr', planned: 4, visited: 4, color: 'bg-green-500' },
+  { id: 4, name: 'Sohel', role: 'Executive', planned: 6, visited: 4, color: 'bg-yellow-500' },
+];
+
+const MOCK_PERSON_SALES = [
+  { 
+    id: 1, name: 'Arif (You)', role: 'Sr. Exec', target: 150000, achieved: 120000, 
+    history: [100000, 110000, 95000, 130000, 140000, 120000],
+    topClients: [
+      { name: 'Ha-Meem Group', value: 50000 },
+      { name: 'Envoy Textiles', value: 35000 },
+      { name: 'Square Fashions', value: 20000 },
+      { name: 'Palmal Group', value: 10000 },
+      { name: 'Beximco', value: 5000 }
+    ],
+    topBrands: [
+      { name: 'H&M', value: 40000 },
+      { name: 'Zara', value: 30000 },
+      { name: 'Gap', value: 25000 },
+      { name: 'Uniqlo', value: 15000 },
+      { name: 'Next', value: 10000 }
+    ]
+  },
+  { 
+    id: 2, name: 'Hassan', role: 'Executive', target: 100000, achieved: 45000,
+    history: [40000, 42000, 38000, 50000, 48000, 45000],
+    topClients: [
+      { name: 'Beximco', value: 25000 },
+      { name: 'Palmal Group', value: 15000 },
+      { name: 'Square Fashions', value: 5000 }
+    ],
+    topBrands: [
+      { name: 'Zara', value: 20000 },
+      { name: 'H&M', value: 15000 },
+      { name: 'Next', value: 10000 }
+    ]
+  },
+  { 
+    id: 3, name: 'Rubel', role: 'Asst. Mgr', target: 200000, achieved: 180000,
+    history: [160000, 170000, 165000, 190000, 195000, 180000],
+    topClients: [
+      { name: 'Ha-Meem Group', value: 80000 },
+      { name: 'Envoy Textiles', value: 60000 },
+      { name: 'Beximco', value: 40000 }
+    ],
+    topBrands: [
+      { name: 'Uniqlo', value: 70000 },
+      { name: 'Gap', value: 60000 },
+      { name: 'H&M', value: 50000 }
+    ]
+  },
+  { 
+    id: 4, name: 'Sohel', role: 'Executive', target: 120000, achieved: 70000,
+    history: [60000, 65000, 62000, 75000, 72000, 70000],
+    topClients: [
+      { name: 'Square Fashions', value: 40000 },
+      { name: 'Palmal Group', value: 30000 }
+    ],
+    topBrands: [
+      { name: 'Next', value: 35000 },
+      { name: 'Zara', value: 35000 }
+    ]
+  },
+];
+
+// --- Reusable Components ---
+const FilterChip = ({ label, active, onClick }) => (
+  <button 
+    onClick={onClick}
+    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all whitespace-nowrap border shadow-sm ${
+      active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+    }`}
+  >
+    {label}
+  </button>
+);
+
+// --- Modals ---
+const AddVisitModal = ({ isOpen, onClose, onSave }) => {
+  if (!isOpen) return null;
+  const [date, setDate] = useState(getDateString(0));
+  const [custId, setCustId] = useState('');
+  const [contactId, setContactId] = useState('');
+  const [note, setNote] = useState('');
+  const availableContacts = MOCK_CONTACTS.filter(c => c.customerId === parseInt(custId));
+  const selectedContactInfo = MOCK_CONTACTS.find(c => c.id === parseInt(contactId));
+  const handleSubmit = () => {
+    if (!custId || !date) return; 
+    onSave({ customerId: parseInt(custId), contactId: parseInt(contactId) || null, userId: 1, date, status: 'Planned', notes: note, feedback: [], productionInfo: null, checkInTime: null, checkOutTime: null, location: null });
+    onClose();
+  };
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm z-[100]">
+      <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-bold">Plan New Visit</h3><button onClick={onClose}><X size={24} className="text-gray-400"/></button></div>
+        <div className="space-y-4">
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Select Customer</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" onChange={(e) => { setCustId(e.target.value); setContactId(''); }}><option value="">Select...</option>{MOCK_CUSTOMERS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm disabled:opacity-50 appearance-none" onChange={(e) => setContactId(e.target.value)} disabled={!custId} value={contactId}><option value="">{availableContacts.length > 0 ? "Select Contact..." : "No contacts found"}</option>{availableContacts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
+          {selectedContactInfo && (<div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-sm space-y-1 animate-in fade-in"><p><span className="font-bold text-blue-800">Designation:</span> {selectedContactInfo.designation}</p><p><span className="font-bold text-blue-800">Phone:</span> {selectedContactInfo.phone}</p><p><span className="font-bold text-blue-800">Email:</span> {selectedContactInfo.email}</p></div>)}
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Date</label><input type="date" value={date} className="w-full border p-3 rounded-xl bg-gray-50 text-sm" onChange={(e) => setDate(e.target.value)} /></div>
+          <div><label className="block text-sm font-medium text-gray-700 mb-1">Purpose/Agenda</label><div className="relative"><select className="w-full border p-3 rounded-xl bg-gray-50 text-sm appearance-none" value={note} onChange={(e) => setNote(e.target.value)}><option value="">Select Purpose...</option>{VISIT_PURPOSES.map((purpose, idx) => (<option key={idx} value={purpose}>{purpose}</option>))}</select><ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90 pointer-events-none" size={16}/></div></div>
+          <button onClick={handleSubmit} className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold mt-2 text-base shadow-lg shadow-blue-200">Save Plan</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FeedbackModal = ({ visit, onClose, onSave }) => {
+  if (!visit) return null;
+  const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
+  const [selectedFeedback, setSelectedFeedback] = useState(visit.feedback || []);
+  const [meetingMinutes, setMeetingMinutes] = useState(visit.minutes || '');
+  const [nextFollowUp, setNextFollowUp] = useState(visit.nextFollowUp || '');
+  const [prodLine, setProdLine] = useState(visit.productionInfo?.line || '');
+  const [prodQty, setProdQty] = useState(visit.productionInfo?.qty || '');
+  const [selectedBrands, setSelectedBrands] = useState(visit.productionInfo?.brands || []);
+  const toggleFeedback = (item) => { if(selectedFeedback.includes(item)) setSelectedFeedback(selectedFeedback.filter(i => i !== item)); else setSelectedFeedback([...selectedFeedback, item]); };
+  const toggleBrand = (brandId) => { if(selectedBrands.includes(brandId)) setSelectedBrands(selectedBrands.filter(id => id !== brandId)); else setSelectedBrands([...selectedBrands, brandId]); };
+  const handleSubmit = () => { onSave(visit.id, { status: 'Completed', minutes: meetingMinutes, nextFollowUp: nextFollowUp, feedback: selectedFeedback, productionInfo: (prodLine || prodQty) ? { line: prodLine, qty: prodQty, brands: selectedBrands } : null }); };
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center sm:p-4 backdrop-blur-sm overflow-y-auto z-[100]">
+      <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-3 border-b"><h3 className="text-xl font-bold">{visit.status === 'Completed' ? 'Update Report' : 'Submit Report'}</h3><button onClick={onClose}><X size={24} className="text-gray-400"/></button></div>
+        <div className="space-y-4">
+          <div className="bg-blue-50 p-3 rounded-xl border border-blue-100"><div className="flex justify-between items-center mb-2"><span className="text-[10px] font-bold bg-blue-200 text-blue-700 px-2 py-0.5 rounded uppercase">{visit.status === 'Completed' ? 'COMPLETED' : 'REPORT PENDING'}</span><span className="text-[10px] text-gray-500">Date: {visit.date}</span></div><div className="font-bold text-blue-900 text-lg">{customer?.name}</div><div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600"><div>In: <span className="font-mono font-bold">{visit.checkInTime || '--:--'}</span></div><div>Out: <span className="font-mono font-bold">{visit.checkOutTime || '--:--'}</span></div></div></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-1">Meeting Minutes</label><textarea className="w-full border p-3 rounded-xl bg-white text-sm" rows="3" placeholder="What was discussed?" value={meetingMinutes} onChange={(e) => setMeetingMinutes(e.target.value)}></textarea></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-2">Outcomes</label><div className="grid grid-cols-2 gap-2">{FEEDBACK_OPTIONS.map((opt, idx) => (<div key={idx} onClick={() => toggleFeedback(opt)} className={`p-2 rounded-lg border text-xs font-medium cursor-pointer flex items-center gap-2 ${selectedFeedback.includes(opt) ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-gray-200 text-gray-600'}`}>{selectedFeedback.includes(opt) ? <CheckSquare size={16} /> : <Square size={16} />}{opt}</div>))}</div></div>
+          <div><label className="block text-sm font-bold text-gray-800 mb-1">Next Follow-up</label><input type="date" className="w-full border p-3 rounded-xl bg-white text-sm" value={nextFollowUp} onChange={(e) => setNextFollowUp(e.target.value)} /></div>
+          <div className="border-t border-gray-100 pt-4"><div className="flex items-center gap-2 mb-3"><Factory size={18} className="text-gray-500"/><label className="text-sm font-bold text-gray-800">Production (Optional)</label></div><div className="grid grid-cols-2 gap-3 mb-3"><input type="text" placeholder="Line No." value={prodLine} onChange={(e) => setProdLine(e.target.value)} className="w-full border p-3 rounded-xl text-sm" /><input type="number" placeholder="Qty" value={prodQty} onChange={(e) => setProdQty(e.target.value)} className="w-full border p-3 rounded-xl text-sm" /></div><div><label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Running Brands</label><div className="flex flex-wrap gap-2">{MOCK_BRANDS.map(brand => (<button key={brand.id} onClick={() => toggleBrand(brand.id)} className={`px-3 py-1 rounded-lg text-xs border font-medium ${selectedBrands.includes(brand.id) ? 'bg-purple-100 border-purple-300 text-purple-700' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>{brand.name}</button>))}</div></div></div>
+          <div className="flex gap-3 pt-2 sticky bottom-0 bg-white pb-1"><button onClick={onClose} className="flex-1 bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold text-sm">Cancel</button><button onClick={handleSubmit} className="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-green-200 text-sm">{visit.status === 'Completed' ? 'Update Report' : 'Save Report'}</button></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- NEW: Notifications View ---
+const NotificationsView = ({ onNavigate }) => {
+  return (
+    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto bg-gray-50">
+      <div className="flex items-center gap-3 mb-5 sticky top-0 bg-gray-50 z-10 py-2">
+        <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
+        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
+      </div>
+      <div className="space-y-3">
+        {MOCK_NOTIFICATIONS.map(notif => (
+          <div key={notif.id} className={`p-4 rounded-2xl border flex gap-4 items-start ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
+             <div className={`p-2.5 rounded-full shrink-0 ${
+                notif.type === 'success' ? 'bg-green-100 text-green-600' : 
+                notif.type === 'alert' ? 'bg-red-100 text-red-600' : 
+                notif.type === 'reminder' ? 'bg-yellow-100 text-yellow-600' : 
+                'bg-blue-100 text-blue-600'
+             }`}>
+                {notif.type === 'success' ? <CheckCircle size={20}/> : 
+                 notif.type === 'alert' ? <Target size={20}/> : 
+                 notif.type === 'reminder' ? <Clock size={20}/> : 
+                 <Info size={20}/>}
+             </div>
+             <div className="flex-1">
+                <h4 className={`font-bold text-sm mb-1 ${notif.read ? 'text-gray-700' : 'text-gray-900'}`}>{notif.title}</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">{notif.message}</p>
+                <span className="text-[10px] text-gray-400 mt-2 block">{notif.time}</span>
+             </div>
+             {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
+          </div>
+        ))}
+      </div>
+      {MOCK_NOTIFICATIONS.length === 0 && (
+         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+            <Bell size={48} className="mb-4 opacity-20"/>
+            <p>No new notifications</p>
+         </div>
+      )}
+    </div>
+  );
+};
