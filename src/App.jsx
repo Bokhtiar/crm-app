@@ -212,6 +212,21 @@ const MOCK_PERSON_SALES = [
 ];
 
 // --- Reusable Components ---
+const PageContainer = ({ children, title, showTitle = true }) => (
+  <div className="space-y-6 pb-24">
+    {showTitle && title && (
+      <div className="px-5 pt-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{title}</h2>
+      </div>
+    )}
+    {children}
+  </div>
+);
+
+const PageSection = ({ children }) => (
+  <div className="px-5">{children}</div>
+);
+
 const FilterChip = ({ label, active, onClick }) => (
   <button 
     onClick={onClick}
@@ -287,12 +302,13 @@ const FeedbackModal = ({ visit, onClose, onSave }) => {
 // --- NEW: Notifications View ---
 const NotificationsView = ({ onNavigate }) => {
   return (
-    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto bg-gray-50">
-      <div className="flex items-center gap-3 mb-5 sticky top-0 bg-gray-50 z-10 py-2">
-        <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
-        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
-      </div>
-      <div className="space-y-3">
+    <PageContainer showTitle={false}>
+      <PageSection>
+        <div className="flex items-center gap-3 mb-5">
+          <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
+          <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
+        </div>
+        <div className="space-y-3">
         {MOCK_NOTIFICATIONS.map(notif => (
           <div key={notif.id} className={`p-4 rounded-2xl border flex gap-4 items-start ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
              <div className={`p-2.5 rounded-full shrink-0 ${
@@ -314,14 +330,15 @@ const NotificationsView = ({ onNavigate }) => {
              {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
           </div>
         ))}
-      </div>
-      {MOCK_NOTIFICATIONS.length === 0 && (
-         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-            <Bell size={48} className="mb-4 opacity-20"/>
-            <p>No new notifications</p>
-         </div>
-      )}
-    </div>
+        </div>
+        {MOCK_NOTIFICATIONS.length === 0 && (
+           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+              <Bell size={48} className="mb-4 opacity-20"/>
+              <p>No new notifications</p>
+           </div>
+        )}
+      </PageSection>
+    </PageContainer>
   );
 };
 
@@ -394,9 +411,9 @@ const DashboardView = ({ visits, onNavigate, onPlanVisit, onSelectVisit, onActio
         </div>
       </header>
       <div className="px-5">
-        <div className="flex justify-between items-center mb-3">
-           <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Visit Overview</h2>
-           <div className="flex gap-1 bg-gray-100 p-0.5 rounded-full overflow-x-auto max-w-[60%] no-scrollbar">
+        <div className="flex justify-between items-center mb-3 gap-2">
+           <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Visit Overview</h2>
+           <div className="flex gap-1 bg-gray-100 p-0.5 rounded-full overflow-x-auto max-w-[70%] no-scrollbar">
              {['Today', 'Week', 'Month'].map(f => (
                <FilterChip key={f} label={f} active={dashboardFilter === f} onClick={() => setDashboardFilter(f)} />
              ))}
@@ -549,50 +566,54 @@ const ClientsView = ({ clientTab, setClientTab, onSelectCustomer, onSelectBrand 
       return matchesSearch && matchesFilter;
   });
   return (
-    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
-      <div className="flex p-1.5 bg-gray-100 rounded-xl mb-4 shadow-inner">
-        <button onClick={() => { setClientTab('customers'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'customers' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Factories</button>
-        <button onClick={() => { setClientTab('brands'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'brands' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Brands</button>
-      </div>
-      <div className="relative mb-4">
-        <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
-        <input type="text" placeholder={`Search ${clientTab}...`} className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-      </div>
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-2 no-scrollbar items-center">
-          {filters.map(filter => (
-              <FilterChip key={filter} label={filter} active={activeFilter === filter} onClick={() => setActiveFilter(filter)} />
-          ))}
-      </div>
-      <div className="space-y-3">
-        {filteredData.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">No results found</div>
-        ) : (
-          filteredData.map(item => {
-           if (clientTab === 'customers') {
-             return (
-              <div key={item.id} onClick={() => onSelectCustomer(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer">
-                <div className="flex justify-between items-start">
-                  <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md mt-1 inline-block">{item.type}</span></div>
-                  <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
+    <PageContainer title="Clients & Brands">
+      <PageSection>
+        <div className="flex p-1.5 bg-gray-100 rounded-xl mb-4 shadow-inner">
+          <button onClick={() => { setClientTab('customers'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'customers' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Factories</button>
+          <button onClick={() => { setClientTab('brands'); setActiveFilter('All'); }} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${clientTab === 'brands' ? 'bg-white shadow text-blue-900' : 'text-gray-500'}`}>Brands</button>
+        </div>
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+          <input type="text" placeholder={`Search ${clientTab}...`} className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar items-center">
+            {filters.map(filter => (
+                <FilterChip key={filter} label={filter} active={activeFilter === filter} onClick={() => setActiveFilter(filter)} />
+            ))}
+        </div>
+      </PageSection>
+      <PageSection>
+        <div className="space-y-3">
+          {filteredData.length === 0 ? (
+              <div className="text-center p-8 text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200">No results found</div>
+          ) : (
+            filteredData.map(item => {
+             if (clientTab === 'customers') {
+               return (
+                <div key={item.id} onClick={() => onSelectCustomer(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer">
+                  <div className="flex justify-between items-start">
+                    <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md mt-1 inline-block">{item.type}</span></div>
+                    <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-50 grid grid-cols-2 gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-1.5"><MapPin size={14} className="text-blue-500"/> {item.address}</div>
+                    <div className="flex items-center gap-1.5"><Briefcase size={14} className="text-blue-500"/> {item.brandIds.length} Brands</div>
+                  </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-50 grid grid-cols-2 gap-2 text-sm text-gray-600">
-                  <div className="flex items-center gap-1.5"><MapPin size={14} className="text-blue-500"/> {item.address}</div>
-                  <div className="flex items-center gap-1.5"><Briefcase size={14} className="text-blue-500"/> {item.brandIds.length} Brands</div>
+               );
+             } else {
+               return (
+                <div key={item.id} onClick={() => onSelectBrand(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer flex justify-between items-center">
+                  <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><p className="text-sm text-gray-500 mt-0.5">{item.origin} • {item.segment}</p></div>
+                   <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
                 </div>
-              </div>
-             );
-           } else {
-             return (
-              <div key={item.id} onClick={() => onSelectBrand(item)} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-transform cursor-pointer flex justify-between items-center">
-                <div><h3 className="font-bold text-gray-800 text-lg">{item.name}</h3><p className="text-sm text-gray-500 mt-0.5">{item.origin} • {item.segment}</p></div>
-                 <div className="bg-gray-50 p-2 rounded-full text-gray-400"><ChevronRight size={20} /></div>
-              </div>
-             );
-           }
-          })
-        )}
-      </div>
-    </div>
+               );
+             }
+            })
+          )}
+        </div>
+      </PageSection>
+    </PageContainer>
   );
 };
 
@@ -608,15 +629,17 @@ const VisitsView = ({ visits, onSelectVisit, onAction }) => {
       return true;
   }).sort((a,b) => new Date(a.date) - new Date(b.date));
   return (
-    <div className="pb-24 pt-4 px-4">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Visit Plan</h2>
-    <div className="flex gap-2 overflow-x-auto pb-3 mb-2 no-scrollbar items-center">
-        {['All', 'Today', 'Planned', 'In Progress', 'Checked Out', 'Completed'].map(f => (
-            <FilterChip key={f} label={f} active={statusFilter === f} onClick={() => setStatusFilter(f)} />
-        ))}
-    </div>
-    <div className="space-y-3">
-        {filteredVisits.length === 0 ? (<div className="text-center py-12 text-gray-400">No visits found</div>) : (
+    <PageContainer title="Visit Plan">
+      <PageSection>
+        <div className="flex gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar items-center">
+          {['All', 'Today', 'Planned', 'In Progress', 'Checked Out', 'Completed'].map(f => (
+              <FilterChip key={f} label={f} active={statusFilter === f} onClick={() => setStatusFilter(f)} />
+          ))}
+        </div>
+      </PageSection>
+      <PageSection>
+        <div className="space-y-3">
+        {filteredVisits.length === 0 ? (<div className="text-center p-8 text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200">No visits found</div>) : (
             filteredVisits.map(visit => {
             const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
             let actionButton = null;
@@ -644,11 +667,11 @@ const VisitsView = ({ visits, onSelectVisit, onAction }) => {
             )
             })
         )}
-    </div>
-    </div>
+        </div>
+      </PageSection>
+    </PageContainer>
   );
 };
-
 
 const VisitDetailView = ({ visit, onClose, onCheckIn, onCheckOut, onFeedback }) => {
   const customer = MOCK_CUSTOMERS.find(c => c.id === visit.customerId);
@@ -995,7 +1018,7 @@ const TeamVisitsView = ({ visits, onNavigate }) => {
     );
   }
   return (
-    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
+    <div className="pb-24 pt-4 px-5 h-full overflow-y-auto">
       <div className="flex items-center gap-3 mb-5">
         <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
         <h2 className="text-2xl font-bold text-gray-800">Team Visits</h2>
@@ -1134,12 +1157,13 @@ const TargetVsAchievementView = ({ onNavigate }) => {
     );
   }
   return (
-    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto">
-      <div className="flex items-center gap-3 mb-5">
-        <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
-        <h2 className="text-2xl font-bold text-gray-800">Target vs Achievement</h2>
-      </div>
-      <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
+    <PageContainer showTitle={false}>
+      <PageSection>
+        <div className="flex items-center gap-3 mb-5">
+          <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
+          <h2 className="text-2xl font-bold text-gray-800">Target vs Achievement</h2>
+        </div>
+        <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
         <div className="relative z-10">
             <p className="text-orange-100 text-sm font-medium mb-1">Total Achievement</p>
             <h3 className="text-3xl font-bold">{formatCurrency(totalAchieved)}</h3>
@@ -1155,9 +1179,9 @@ const TargetVsAchievementView = ({ onNavigate }) => {
             </div>
         </div>
         <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-      </div>
-      <h3 className="font-bold text-gray-800 mb-3">Marketing Person Wise</h3>
-      <div className="space-y-3">
+        </div>
+        <h3 className="font-bold text-gray-800 mb-3">Marketing Person Wise</h3>
+        <div className="space-y-3">
         {MOCK_PERSON_SALES.map((person) => {
           const pct = (person.achieved / person.target) * 100;
           return (
@@ -1179,8 +1203,9 @@ const TargetVsAchievementView = ({ onNavigate }) => {
             </div>
           )
         })}
-      </div>
-    </div>
+        </div>
+      </PageSection>
+    </PageContainer>
   );
 };
 
@@ -1200,8 +1225,8 @@ const MoreView = ({ onNavigate, setClientTab }) => {
     { id: 'decision', label: 'Decision Points', icon: <Lightbulb size={24}/>, color: 'text-amber-600', bg: 'bg-amber-100' },
   ];
   return (
-    <div className="pb-24 pt-6 px-5 h-full overflow-y-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-5">More Features</h2>
+    <PageContainer title="More Features">
+      <PageSection>
       <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Management & Strategy</h3>
       <div className="grid grid-cols-4 gap-2 mb-6">
         {menuItems.slice(0, 4).map(item => (
@@ -1229,41 +1254,69 @@ const MoreView = ({ onNavigate, setClientTab }) => {
           </button>
         ))}
       </div>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 };
 
-const NotificationView = ({ onNavigate }) => {
-  const notifications = [
-    { id: 1, type: 'success', title: 'Visit Completed', message: 'You successfully checked out from Ha-Meem Group.', time: '10 mins ago', read: false },
-    { id: 2, type: 'alert', title: 'Target Alert', message: 'You have reached 80% of your monthly sales target!', time: '1 hour ago', read: false },
-    { id: 3, type: 'info', title: 'New Price List', message: 'Admin updated the price list for Woven Interlining.', time: 'Yesterday', read: true },
-  ];
+// --- Sales View ---
+const SalesView = ({ onSelectProduct, onNavigate }) => {
   return (
-    <div className="pb-24 pt-4 px-4 h-full overflow-y-auto bg-gray-50">
-       <div className="flex items-center gap-3 mb-5 sticky top-0 bg-gray-50 z-10 py-2">
-        <button onClick={() => onNavigate('dashboard')} className="bg-white p-2 rounded-full shadow-sm border border-gray-200"><ArrowLeft size={22}/></button>
-        <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
-      </div>
-      <div className="space-y-3">
-        {notifications.map(notif => (
-          <div key={notif.id} className={`p-4 rounded-2xl border flex gap-4 items-start ${notif.read ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100 shadow-sm'}`}>
-             <div className={`p-2.5 rounded-full shrink-0 ${notif.type === 'success' ? 'bg-green-100 text-green-600' : notif.type === 'alert' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
-                {notif.type === 'success' ? <CheckCircle size={20}/> : notif.type === 'alert' ? <Target size={20}/> : <Info size={20}/>}
-             </div>
-             <div className="flex-1">
-                <h4 className={`font-bold text-sm mb-1 ${notif.read ? 'text-gray-700' : 'text-gray-900'}`}>{notif.title}</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">{notif.message}</p>
-                <span className="text-[10px] text-gray-400 mt-2 block">{notif.time}</span>
-             </div>
-             {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
+    <PageContainer showTitle={false}>
+      <PageSection>
+        <div className="flex items-center gap-3 mb-5">
+          <button onClick={() => onNavigate('more')} className="bg-gray-100 p-2 rounded-full"><ArrowLeft size={22}/></button>
+          <h2 className="text-2xl font-bold text-gray-800">Sales Overview</h2>
+        </div>
+        
+        <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-6 rounded-2xl shadow-lg mb-6 relative overflow-hidden">
+        <div className="relative z-10">
+          <p className="text-blue-100 text-sm font-medium mb-1">Monthly Target</p>
+          <h3 className="text-3xl font-bold">{formatCurrency(MOCK_SALES_DATA.monthlyTarget)}</h3>
+          <p className="text-sm opacity-80 mt-1">Achieved: {formatCurrency(MOCK_SALES_DATA.achieved)}</p>
+          <div className="mt-4">
+            <div className="flex justify-between text-xs mb-1 font-medium">
+              <span>Progress</span>
+              <span>{((MOCK_SALES_DATA.achieved / MOCK_SALES_DATA.monthlyTarget) * 100).toFixed(1)}%</span>
+            </div>
+            <div className="w-full bg-black/20 h-2 rounded-full overflow-hidden">
+              <div className="bg-white h-full rounded-full" style={{ width: `${(MOCK_SALES_DATA.achieved / MOCK_SALES_DATA.monthlyTarget) * 100}%` }}></div>
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+        <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        </div>
+
+        <h3 className="font-bold text-gray-800 mb-3">Product Performance</h3>
+        <div className="space-y-3">
+        {MOCK_SALES_DATA.products.map((product) => {
+          const pct = (product.achieved / product.target) * 100;
+          return (
+            <div key={product.id} onClick={() => onSelectProduct(product)} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm active:scale-95 transition-transform cursor-pointer">
+              <div className="flex justify-between mb-2">
+                <div>
+                  <span className="font-bold text-gray-800">{product.name}</span>
+                  <p className="text-xs text-gray-500 mt-0.5">Target: {formatCurrency(product.target)}</p>
+                </div>
+                <span className={`text-sm font-bold ${pct >= 75 ? 'text-green-600' : 'text-orange-600'}`}>{pct.toFixed(0)}%</span>
+              </div>
+              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-2">
+                <div className={`h-full rounded-full ${pct >= 75 ? 'bg-green-500' : 'bg-orange-500'}`} style={{ width: `${pct}%` }}></div>
+              </div>
+              <div className="flex justify-between text-xs text-gray-500 font-medium">
+                <span>Achieved: {formatCurrency(product.achieved)}</span>
+                <span className={`${pct >= 75 ? 'text-green-600' : 'text-orange-600'}`}>
+                  {pct >= 75 ? '✓ On Track' : '⚠ Below Target'}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+        </div>
+      </PageSection>
+    </PageContainer>
   );
 };
-
 
 // --- Main App Component ---
 export default function App() {
@@ -1353,7 +1406,7 @@ export default function App() {
         )}
        </main>
        {!selectedVisit && !selectedCustomer && !selectedBrand && !selectedProduct && (
-        <nav className="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center fixed bottom-0 w-full z-40 pb-5 transition-all duration-300" style={{ maxWidth: isMobileView ? '28rem' : '100%' }}>
+        <nav className="bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center absolute bottom-0 left-0 right-0 z-40 pb-5 transition-all duration-300">
           {showQuickMenu && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-xs bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-5 animate-in slide-in-from-bottom-8 fade-in zoom-in-95 z-50 origin-bottom">
               <div className="text-center mb-4"><h3 className="text-gray-800 font-bold text-lg">Quick Actions</h3><p className="text-xs text-gray-400">What would you like to do?</p></div>
